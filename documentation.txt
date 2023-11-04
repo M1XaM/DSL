@@ -1,0 +1,23 @@
+General specifications:
+Input: File
+Output: Terminal
+Each statement must begin with new line
+Case sensitive
+Comments start with #
+
+
+Existing instructions:
+# <---comments
+var <type> <variable name> = <value>
+show <variable name / number>
+add <variable name / number> to <variable name>
+substract <variable name / number> from <variable name>
+divide <variable name> by <variable name / number>
+multiply <variable name> with <variable name / number>
+<variable name> to the power <variable name / number>
+from <variable name> to <variable name / number> repeat   (only the next line after this will be repeated)
+if <boolean expression> then (only the next line after this will be repeated)
+
+
+
+
