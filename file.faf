@@ -1,3 +1,10 @@
 var int a = 223
 var float alpha = 599
 var float abc = 123.412
+show alpha
+
+add 3 to alpha
+substract 7 from abc
+divide abc by 123.412
+multiply abc with 22
+alpha to the power 3

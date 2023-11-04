@@ -1,31 +1,12 @@
 #include<iostream>
 #include<string>
-#include<fstream>
 #include<regex>
-#include<cstdlib> 
+#include<vector>
+#include"lexer.h"
 using namespace std;
 
-enum Pattern {
-    EmptyLineID = 1,
-    CommentLineID,
-    IntInitID,
-    FloatInitID,
-    ShowLineID,
-    AddLineID,
-    SubstractLineID,
-    DivideLineID,
-    MultiplyLineID,
-    PowerLineID,
-    LoopLineID,
-    ConditionalLineID
-};
+void lexer(string line, int lineCount, vector<vector<map<string, string>>>& mainObject){
 
-int main(){
-
-    return 0;
-}
-
-int lexer(string line, int lineCount, vector<vector<map<string, string>>> mainObject){
     regex EmptyLine("[\\s]*");
     regex CommentLine("[\\s]*#.*[\\s]*");
     regex IntInit("[\\s]*var\\s+int\\s+([a-zA-Z_]+)[\\s]*=[\\s]*([0-9]+)[\\s]*");
@@ -38,76 +19,133 @@ int lexer(string line, int lineCount, vector<vector<map<string, string>>> mainOb
     regex PowerLine("[\\s]*([a-zA-Z_]\\w*|\\d+(\\.\\d+)?)\\s+to\\s+the\\s+power\\s+([a-zA-Z_]\\w*|\\d+(\\.\\d+)?)[\\s]*");
     regex LoopLine("[\\s]*for\\s+([a-zA-Z_]\\w*|_)\\s+to\\s+([a-zA-Z_]\\w*|\\d+)\\s+repeat[\\s]*");
     regex ConditionalLine("[\\s]*if\\s+([a-zA-Z_]\\w*|\\d+(\\.\\d+)?|\\.\\d+)\\s+(>|<|==|!=|>=|<=)\\s+([a-zA-Z_]\\w*|\\d+(\\.\\d+)?|\\.\\d+)\\s+then[\\s]*");
-
-    // ofstream outputFile("file.inter.faf");
-    // if (!outputFile.is_open()) {
-    //     cout << "Error opening the file." << endl;
-    //     return 1;
-    // }
+    regex WrongDataType("[\\s]*var\\s+int\\s+([a-zA-Z_]+)[\\s]*=[\\s]*([0-9]+(\\.([0-9]+)?)?)[\\s]*");
 
     vector<map<string, string>> objectLine;
     smatch parsingArray;
-    Pattern patternNumber;
     if(regex_match(line, CommentLine)){
-        patternNumber = CommentLineID;
     }else if(regex_match(line, EmptyLine)){
-        patternNumber = EmptyLineID;
-
 
     }else if(regex_match(line, IntInit)){
-        // patternNumber = IntInitID;
         if(regex_search(line, parsingArray, IntInit)){
-            map<string, string> intInitiate;
-            intInitiate["type"] = "DataType";
-            intInitiate["image"] = "int";
-            objectLine.push_back(intInitiate);
 
-            map<string, string> var;
-            var["type"] = "Identifier";
-            var["image"] = parsingArray[1];
-            objectLine.push_back(var);
+            map<string, string> intvar;
+            intvar["type"] = "Identifier";
+            intvar["datatype"] = "int";
+            intvar["image"] = parsingArray[1];
+            objectLine.push_back(intvar);
 
             map<string, string> op;
             op["type"] = "Operator";
             op["image"] = "=";
             objectLine.push_back(op);
 
-            map<string, string> val;
-            val["type"] = "Numeric";
-            val["image"] = parsingArray[2];
-            objectLine.push_back(val);
+            map<string, string> intval;
+            intval["type"] = "Numeric";
+            intval["image"] = parsingArray[2];
+            objectLine.push_back(intval);
 
             mainObject.push_back(objectLine);
-
-
-
-
-        //     for(int i = 0; i < int_name_variables.size(); i++){
-        //         if(int_name_variables[i] == parsingArray[1]){
-        //             cout << "Initialization Error: You cannot initiate one variable two times (line " << lineCount << ")" << endl;
-        //             exit(1);
-        //         }
-        //     }
-        //     for(int i = 0; i < float_name_variables.size(); i++){
-        //         if(float_name_variables[i] == parsingArray[1]){
-        //             cout << "Initialization Error: You cannot initiate one variable two times (line " << lineCount << ")" << endl;
-        //             exit(1);
-        //         }
-        //     }
-        //     int_name_variables.push_back(parsingArray[1]);
-        //     int_value_variables.push_back(stoi(parsingArray[2]));
         }
-
 
     }else if(regex_match(line, FloatInit)){
-        patternNumber = FloatInitID;
         if(regex_search(line, parsingArray, FloatInit)){
 
-            map<string, string> intInitiate;
-            intInitiate["type"] = "DataType";
-            intInitiate["image"] = "float";
-            objectLine.push_back(intInitiate);
+            map<string, string> floatvar;
+            floatvar["type"] = "Identifier";
+            floatvar["datatype"] = "float";
+            floatvar["image"] = parsingArray[1];
+            objectLine.push_back(floatvar);
 
+            map<string, string> op;
+            op["type"] = "Operator";
+            op["image"] = "=";
+            objectLine.push_back(op);
+
+            map<string, string> floatval;
+            floatval["type"] = "Numeric";
+            floatval["image"] = parsingArray[2];
+            objectLine.push_back(floatval);
+
+            mainObject.push_back(objectLine);
+        }
+
+    }else if(regex_match(line, ShowLine)){
+        if(regex_search(line, parsingArray, ShowLine)){
+
+            map<string, string> showop;
+            showop["type"] = "Operator";
+            showop["image"] = "show";
+            objectLine.push_back(showop);
+
+            map<string, string> var;
+            var["type"] = "Identifier";
+            var["image"] = parsingArray[1];
+            objectLine.push_back(var);
+
+            mainObject.push_back(objectLine);
+        }
+
+    }else if(regex_match(line, AddLine)){
+        if(regex_search(line, parsingArray, AddLine)){
+            map<string, string> var;
+            var["type"] = "Identifier";
+            var["image"] = parsingArray[3]; // a pair of () are in excess in regex, but for now its working
+            objectLine.push_back(var);
+
+            map<string, string> op;
+            op["type"] = "Operator";
+            op["image"] = "=";
+            objectLine.push_back(op);
+
+            map<string, string> samevar;
+            samevar["type"] = "Identifier";
+            samevar["image"] = parsingArray[3];
+            objectLine.push_back(samevar);
+
+            map<string, string> plus;
+            plus["type"] = "Operator";
+            plus["image"] = "+";
+            objectLine.push_back(plus);
+
+            map<string, string> val;
+            val["type"] = "Operator";
+            val["image"] = parsingArray[1];
+            objectLine.push_back(val);
+
+            mainObject.push_back(objectLine);
+        }
+    }else if(regex_match(line, SubstractLine)){
+        if(regex_search(line, parsingArray, SubstractLine)){
+            map<string, string> var;
+            var["type"] = "Identifier";
+            var["image"] = parsingArray[3];
+            objectLine.push_back(var);
+
+            map<string, string> op;
+            op["type"] = "Operator";
+            op["image"] = "=";
+            objectLine.push_back(op);
+
+            map<string, string> samevar;
+            samevar["type"] = "Identifier";
+            samevar["image"] = parsingArray[3];
+            objectLine.push_back(samevar);
+
+            map<string, string> minus;
+            minus["type"] = "Operator";
+            minus["image"] = "-";
+            objectLine.push_back(minus);
+
+            map<string, string> val;
+            val["type"] = "Operator";
+            val["image"] = parsingArray[1];
+            objectLine.push_back(val);
+
+            mainObject.push_back(objectLine);
+        }        
+    }else if(regex_match(line, DivideLine)){
+        if(regex_search(line, parsingArray, DivideLine)){
             map<string, string> var;
             var["type"] = "Identifier";
             var["image"] = parsingArray[1];
@@ -118,79 +156,88 @@ int lexer(string line, int lineCount, vector<vector<map<string, string>>> mainOb
             op["image"] = "=";
             objectLine.push_back(op);
 
+            map<string, string> samevar;
+            samevar["type"] = "Identifier";
+            samevar["image"] = parsingArray[1];
+            objectLine.push_back(samevar);
+
+            map<string, string> divide;
+            divide["type"] = "Operator";
+            divide["image"] = ":";
+            objectLine.push_back(divide);
+
             map<string, string> val;
-            val["type"] = "Numeric";
+            val["type"] = "Operator";
             val["image"] = parsingArray[2];
             objectLine.push_back(val);
 
             mainObject.push_back(objectLine);
-
-
-
-
-
-
-
-
-
-
-            // for(int i = 0; i < int_name_variables.size(); i++){
-            //     if(int_name_variables[i] == parsingArray[1]){
-            //         cout << "Initialization Error: You cannot initiate one variable more than one time (line " << lineCount << ")" << endl;
-            //         exit(1);
-            //     }
-            // }
-            // for(int i = 0; i < float_name_variables.size(); i++){
-            //     if(float_name_variables[i] == parsingArray[1]){
-            //         cout << "Initialization Error: You cannot initiate one variable more than one time (line " << lineCount << ")" << endl;
-            //         exit(1);
-            //     }
-            // }
-            // float_name_variables.push_back(parsingArray[1]);
-            // float_value_variables.push_back(stoi(parsingArray[2]));
-        }
-
-
-    }else if(regex_match(line, ShowLine)){
-        patternNumber = ShowLineID;
-        if(regex_search(line, parsingArray, ShowLine)){
-            for(int i = 0; i < int_name_variables.size(); i++){
-                if(int_name_variables[i] == parsingArray[1]){
-                    cout << int_value_variables[i] << endl;
-                    return patternNumber;
-                }
-            }
-            for(int i = 0; i < float_name_variables.size(); i++){
-                if(float_name_variables[i] == parsingArray[1]){
-                    cout << float_value_variables[i] << endl;
-                    return patternNumber;
-                }
-            }
-            cout << "Initialization Error: Variable " << parsingArray[1] << " is not founded (line " << lineCount << ")" << endl;
-            exit(1);
-        }
-
-
-    }else if(regex_match(line, AddLine)){
-        patternNumber = AddLineID;
-        if(regex_search(line, parsingArray, AddLine)){
-        }
-    }else if(regex_match(line, SubstractLine)){
-        patternNumber = SubstractLineID;
-    }else if(regex_match(line, DivideLine)){
-        patternNumber = DivideLineID;
+        }                
     }else if(regex_match(line, MultiplyLine)){
-        patternNumber = MultiplyLineID;
+        if(regex_search(line, parsingArray, MultiplyLine)){
+            map<string, string> var;
+            var["type"] = "Identifier";
+            var["image"] = parsingArray[1];
+            objectLine.push_back(var);
+
+            map<string, string> op;
+            op["type"] = "Operator";
+            op["image"] = "=";
+            objectLine.push_back(op);
+
+            map<string, string> samevar;
+            samevar["type"] = "Identifier";
+            samevar["image"] = parsingArray[1];
+            objectLine.push_back(samevar);
+
+            map<string, string> multiply;
+            multiply["type"] = "Operator";
+            multiply["image"] = "*";
+            objectLine.push_back(multiply);
+
+            map<string, string> val;
+            val["image"] = parsingArray[2];
+            objectLine.push_back(val);
+
+            mainObject.push_back(objectLine);
+        }     
     }else if(regex_match(line, PowerLine)){
-        patternNumber = PowerLineID;
+        if(regex_search(line, parsingArray, PowerLine)){
+            map<string, string> var;
+            var["type"] = "Identifier";
+            var["image"] = parsingArray[1];
+            objectLine.push_back(var);
+
+            map<string, string> op;
+            op["type"] = "Operator";
+            op["image"] = "=";
+            objectLine.push_back(op);
+
+            map<string, string> samevar;
+            samevar["type"] = "Identifier";
+            samevar["image"] = parsingArray[1];
+            objectLine.push_back(samevar);
+
+            map<string, string> power;
+            power["type"] = "Operator";
+            power["image"] = "**";
+            objectLine.push_back(power);
+
+            map<string, string> val;
+            val["type"] = "Operator";
+            val["image"] = parsingArray[3];
+            objectLine.push_back(val);
+
+            mainObject.push_back(objectLine);
+        }     
     }else if(regex_match(line, LoopLine)){
-        patternNumber = LoopLineID;
     }else if(regex_match(line, ConditionalLine)){
-        patternNumber = ConditionalLineID;
+    }else if(regex_match(line, WrongDataType)){
+        cout << "Initialization Error: Wrong data type (on line number " << lineCount << ")" << endl;
+        exit(1);
     }else{
         cout << "Syntax Error (on line number " << lineCount << ")" << endl;
         exit(1);
     }
-    
-    return patternNumber;
 }
+
