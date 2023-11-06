@@ -6,6 +6,8 @@ using namespace std;
 #ifndef MYFUNCTIONS_H
 #define MYFUNCTIONS_H
 
-void lexer(string, int, vector<vector<map<string, string>>>&);
+enum class TokenType;
+struct Token;
+void tokenizer(string, int, vector<vector<Token>>&);
 
 #endif 
