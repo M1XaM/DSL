@@ -4,17 +4,15 @@
 #include<regex>
 using namespace std;
 
-enum TokenType{
-    Number,
-    Identifier,
+enum class TokenType{
+    Equal = 1,
+    Plus = 2, Minus = 2,
+    Multiply = 3, Divide = 3,
+    Power = 4,
+    Number = 5, Identifier = 5,
+    // LinkedNode is hadled manually
     Init,
     Show,
-    BinaryOperator,
-    Plus, 
-    Minus,
-    Multiply,
-    Divide,
-    Equal,
     OpenParen,
     CloseParen,
 };

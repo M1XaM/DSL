@@ -6,17 +6,20 @@
 #include"parser.h"
 using namespace std;
 
+void inorderTraversal(Node* root);
+Node* insert(Node* root, Token& token);
+
+
+
 enum class TokenType{
-    Number,
-    Identifier,
+    Equal = 1,
+    Plus = 2, Minus = 2,
+    Multiply = 3, Divide = 3,
+    Power = 4,
+    Number = 5, Identifier = 5,
+    // LinkedNode is hadled manually
     Init,
     Show,
-    BinaryOperator,
-    Plus, 
-    Minus,
-    Multiply,
-    Divide,
-    Equal,
     OpenParen,
     CloseParen,
 };
@@ -26,16 +29,11 @@ struct Token {
     string value;
 };
 
-struct Node {
-    Token* token;
-    Node* left;
-    Node* right;
-};
 
-struct ASTNode {
+struct Node {
     Token token;
-    ASTNode* leftChild;
-    ASTNode* rightChild;
+    Node* leftChild;
+    Node* rightChild;
 };
 
 void display_mainObject(vector<vector<Token>> mainObject){
@@ -46,6 +44,7 @@ void display_mainObject(vector<vector<Token>> mainObject){
         cout << endl;
     }
 }
+
 int main(){
     vector<vector<Token>> mainObject;
 
@@ -67,7 +66,7 @@ int main(){
         lineCount += 1;
         tokenizer(line, lineCount, mainObject);
     }
-    display_mainObject(mainObject); // for testing
+    // display_mainObject(mainObject); // for testing
     inputFile.close();
 
 
@@ -76,8 +75,16 @@ int main(){
     vector<string> int_names;
     vector<string> float_names;
     for(int i = 0; i < mainObject.size(); i++){
+        vector<Token> tokens = mainObject[i];
+        Node* root = (Node*)malloc(sizeof(Node));
+        for(int j = 0; j < tokens.size(); j++){
+            root = insert(root, tokens[j]);
+        }
+        inorderTraversal(root);
+        free(root);
+
         // vector<Token> lineObject = mainObject[i];
-        // ASTNode* root = makeAST(lineObject);
+        // Node* root = makeAST(lineObject);
         // interpreter(root, int_values, ...);
         // clearTree(root);
     }

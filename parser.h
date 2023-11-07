@@ -8,9 +8,9 @@ using namespace std;
 
 enum class TokenType;
 struct Token;
-struct ASTNode;
+struct Node;
 
-ASTNode* makeAST(vector<Token>& lineObject);
-void clearTree(ASTNode& root);
+Node* makeAST(vector<Token>& lineObject);
+void clearTree(Node& root);
 
 #endif 
