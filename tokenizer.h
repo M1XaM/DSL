@@ -3,8 +3,8 @@
 #include<map>
 using namespace std;
 
-#ifndef MYFUNCTIONS_H
-#define MYFUNCTIONS_H
+#ifndef TOKENIZER_H
+#define TOKENIZER_H
 
 enum class TokenType;
 struct Token;

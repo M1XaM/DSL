@@ -4,7 +4,7 @@
 #include<regex>
 using namespace std;
 
-enum class TokenType{
+enum TokenType{
     Number,
     Identifier,
     Init,
@@ -18,6 +18,8 @@ enum class TokenType{
     OpenParen,
     CloseParen,
 };
+
+
 
 struct Token {
     TokenType type;
@@ -94,7 +96,7 @@ void tokenizeExpression(string expression, vector<Token>& objectLine, vector<vec
                 str = "";
             }
         }else{
-        str += expression[i];
+            str += expression[i];
         }
     }
 

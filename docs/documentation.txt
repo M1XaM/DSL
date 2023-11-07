@@ -1,23 +1,26 @@
 General specifications:
 Input: File
 Output: Terminal
-Each statement must begin with new line
+Variables naming: only letters
 Case sensitive
+Each statement must begin with new line
 Comments start with #
 
 
-Existing instructions:
-# <---comments
-var <type> <variable name> = <value>
-show <variable name / number>
-add <variable name / number> to <variable name>
-substract <variable name / number> from <variable name>
-divide <variable name> by <variable name / number>
-multiply <variable name> with <variable name / number>
-<variable name> to the power <variable name / number>
-from <variable name> to <variable name / number> repeat   (only the next line after this will be repeated)
-if <boolean expression> then (only the next line after this will be repeated)
 
+Existing instructions:
+# Comments
+<int/float> <varname> = <math expression>
+<varname> <+/-/*/ / /**>= <math expression>
+show <varname>
+
+Example of a program:
+int a=12
+# Variable a - initialized
+a /= 2 + 3
+show a
+a**=  (1+1)
+show a
 
 
 
