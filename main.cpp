@@ -4,10 +4,16 @@
 #include<vector>
 #include"tokenizer.h"
 #include"parser.h"
+#include"interpreter.h"
 using namespace std;
 
-void inorderTraversal(Node* root);
-Node* insert(Node* root, Token& token);
+Node* makeTree(vector<Token>& lineObject);
+void interpreter(Node& root, 
+                vector<int>& int_values,
+                vector<float>& float_values,
+                vector<string>& int_names,
+                vector<string>& float_names);
+
 
 
 
@@ -17,11 +23,8 @@ enum class TokenType{
     Multiply = 3, Divide = 3,
     Power = 4,
     Number = 5, Identifier = 5,
-    // LinkedNode is hadled manually
-    Init,
-    Show,
-    OpenParen,
-    CloseParen,
+    OpenParen = 6, CloseParen = 6,
+    Init, Show,
 };
 
 struct Token {
@@ -29,11 +32,13 @@ struct Token {
     string value;
 };
 
-
 struct Node {
-    Token token;
+    TokenType type;
+    string value;
     Node* leftChild;
     Node* rightChild;
+    int priority;
+    int depth;
 };
 
 void display_mainObject(vector<vector<Token>> mainObject){
@@ -52,7 +57,7 @@ int main(){
     // cout << "Enter the name of exisiting file: ";
     // cin >> filename;
     // ifstream inputFile(filename);
-    ifstream inputFile("file.faf"); // for testing
+    ifstream inputFile("file.faf"); 
 
     if (!inputFile.is_open()){
         cout << "Error opening the file." << endl;
@@ -70,24 +75,22 @@ int main(){
     inputFile.close();
 
 
-    vector<int> int_values;
-    vector<float> float_values;
-    vector<string> int_names;
-    vector<string> float_names;
-    for(int i = 0; i < mainObject.size(); i++){
-        vector<Token> tokens = mainObject[i];
-        Node* root = (Node*)malloc(sizeof(Node));
-        for(int j = 0; j < tokens.size(); j++){
-            root = insert(root, tokens[j]);
-        }
-        inorderTraversal(root);
-        free(root);
+    // For interpreter
+    static vector<int> int_values;
+    static vector<float> float_values;
+    static vector<string> int_names;
+    static vector<string> float_names;
 
-        // vector<Token> lineObject = mainObject[i];
-        // Node* root = makeAST(lineObject);
-        // interpreter(root, int_values, ...);
-        // clearTree(root);
+    for(int i = 0; i < mainObject.size(); i++){
+
+        // Send to parser
+        Node* root = new Node();
+        root = makeTree(mainObject[i]);
+
+        // Send to interpreter
+        interpreter(*root, int_values, float_values, int_names, float_names);
     }
+    
     return 0;
 }
 

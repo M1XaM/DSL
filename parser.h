@@ -10,7 +10,7 @@ enum class TokenType;
 struct Token;
 struct Node;
 
-Node* makeAST(vector<Token>& lineObject);
+Node* makeTree(vector<Token>& lineObject);
 void clearTree(Node& root);
 
 #endif 
