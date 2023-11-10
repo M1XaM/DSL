@@ -95,15 +95,15 @@ Node* performOperation(Node& node, vector<int>& int_values, vector<float>& float
 
 void interpreter(Node& root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
     if(isOperation(root) && haveValues(root)){
+        cout << "operation start" << endl;
         root = *(performOperation(root, int_values, float_values, int_names, float_names));
 
     }else if(root.type == TokenType::Equal && root.leftChild->type == TokenType::Identifier && root.rightChild->type == TokenType::Number){
         // Assign a value to existent variable
-        cout << "at least this section is started" << endl;
+        cout << "assigment statement start" << endl;
         for(int i = 0; i < int_names.size(); i++){
             if(int_names[i] == root.leftChild->value){
                 int_values[i] = static_cast<int>((stof(root.rightChild->value)));
-                cout << "This shit is passed" << endl;
                 return;
             }
         }
@@ -117,6 +117,7 @@ void interpreter(Node& root, vector<int>& int_values, vector<float>& float_value
         exit(1);
 
     }else if(root.type == TokenType::Init && root.leftChild->type == TokenType::Equal && root.leftChild->rightChild->type == TokenType::Number){
+        cout << "creating new var start" << endl;
         // Create new variable with a value
         Node* varNode = root.leftChild->leftChild;
         Node* numNode = root.leftChild->rightChild;
@@ -141,12 +142,16 @@ void interpreter(Node& root, vector<int>& int_values, vector<float>& float_value
             float_values.push_back(stof(numNode->value));
         }
 
+        cout << int_names[0] << endl;
     }else if(root.type == TokenType::Show){
+        cout << "showing var start" << endl;
         // Show existent VARIABLE
         cout << root.leftChild->value << endl;
     }else if(root.leftChild == nullptr){
+        cout << "return start" << endl;
         return;
     }else{
+        cout << "recursive start" << endl;
         interpreter(*root.leftChild, int_values, float_values, int_names, float_names);
         interpreter(*root.rightChild, int_values, float_values, int_names, float_names);
     }

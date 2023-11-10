@@ -1,4 +1,3 @@
-int a = 12
-show a
+int a = 13
 a /= 2 + 3
 show a

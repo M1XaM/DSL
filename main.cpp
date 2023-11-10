@@ -7,6 +7,7 @@
 #include"interpreter.h"
 using namespace std;
 
+void tokenizer(string line, int lineCount, vector<Token>& lineObject);
 Node* makeTree(vector<Token>& lineObject);
 void clearTree(Node* root);
 void interpreter(Node& root, 
@@ -41,24 +42,20 @@ struct Node {
     int priority;
 };
 
-void display_mainObject(vector<vector<Token>> mainObject){
-    for(int i = 0; i < mainObject.size(); i++){
-        for(int j = 0; j < mainObject[i].size(); j++){
-            cout << mainObject[i][j].value << " ";
-        }
-        cout << endl;
+void display_mainObject(vector<Token> lineObject){
+    for(int i = 0; i < lineObject.size(); i++){
+        cout << lineObject[i].value << " ";
     }
+    cout << endl;
 }
 
 int main(){
-    vector<vector<Token>> mainObject;
 
     // string filename;
     // cout << "Enter the name of exisiting file: ";
     // cin >> filename;
     // ifstream inputFile(filename);
     ifstream inputFile("file.faf"); 
-
     if (!inputFile.is_open()){
         cout << "Error opening the file." << endl;
         return 1;
@@ -70,31 +67,27 @@ int main(){
     static vector<string> int_names;
     static vector<string> float_names;
 
-
     string line;
     int lineCount = 0;
     while(getline(inputFile, line)){
         lineCount += 1;
-        
-        tokenizer(line, lineCount, mainObject);
+
+        vector<Token> lineObject;
+        tokenizer(line, lineCount, lineObject);
         cout << "Tokenizer passed" << endl;
-    }
-    display_mainObject(mainObject); // for testing
-    inputFile.close();
-
-
-    
-
-    for(int i = 0; i < mainObject.size(); i++){
+        display_mainObject(lineObject); 
 
         Node* root = new Node();
-        root = makeTree(mainObject[i]);
+        root = makeTree(lineObject);
         cout << "Parser passed" << endl;
+
         interpreter(*root, int_values, float_values, int_names, float_names);
         cout << "Interpreter passed" << endl;
-
+        // clearTree(root);
+        cout << "Line " << lineCount << " is passed" << endl;
     }
-    
+
+    inputFile.close();
     return 0;
 }
 

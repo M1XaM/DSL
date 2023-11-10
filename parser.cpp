@@ -30,8 +30,12 @@ void clearTree(Node* root) {
     if (root == nullptr) {
         return;
     }
-    clearTree(root->leftChild);
-    clearTree(root->rightChild);
+    if(root->leftChild != nullptr){
+        clearTree(root->leftChild);
+    }
+    if(root->rightChild != nullptr){
+        clearTree(root->rightChild);
+    }
     delete root;
 }
 

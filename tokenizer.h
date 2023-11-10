@@ -8,6 +8,6 @@ using namespace std;
 
 enum class TokenType;
 struct Token;
-void tokenizer(string, int, vector<vector<Token>>&);
+void tokenizer(string, int, vector<Token>&);
 
 #endif 
