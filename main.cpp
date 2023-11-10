@@ -8,6 +8,7 @@
 using namespace std;
 
 Node* makeTree(vector<Token>& lineObject);
+void clearTree(Node* root);
 void interpreter(Node& root, 
                 vector<int>& int_values,
                 vector<float>& float_values,
@@ -38,7 +39,6 @@ struct Node {
     Node* leftChild;
     Node* rightChild;
     int priority;
-    int depth;
 };
 
 void display_mainObject(vector<vector<Token>> mainObject){
@@ -64,31 +64,35 @@ int main(){
         return 1;
     }
 
-
-    string line;
-    int lineCount = 0;
-    while(getline(inputFile, line)){
-        lineCount += 1;
-        tokenizer(line, lineCount, mainObject);
-    }
-    // display_mainObject(mainObject); // for testing
-    inputFile.close();
-
-
     // For interpreter
     static vector<int> int_values;
     static vector<float> float_values;
     static vector<string> int_names;
     static vector<string> float_names;
 
+
+    string line;
+    int lineCount = 0;
+    while(getline(inputFile, line)){
+        lineCount += 1;
+        
+        tokenizer(line, lineCount, mainObject);
+        cout << "Tokenizer passed" << endl;
+    }
+    display_mainObject(mainObject); // for testing
+    inputFile.close();
+
+
+    
+
     for(int i = 0; i < mainObject.size(); i++){
 
-        // Send to parser
         Node* root = new Node();
         root = makeTree(mainObject[i]);
-
-        // Send to interpreter
+        cout << "Parser passed" << endl;
         interpreter(*root, int_values, float_values, int_names, float_names);
+        cout << "Interpreter passed" << endl;
+
     }
     
     return 0;

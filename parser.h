@@ -11,6 +11,6 @@ struct Token;
 struct Node;
 
 Node* makeTree(vector<Token>& lineObject);
-void clearTree(Node& root);
+void clearTree(Node* root);
 
 #endif 

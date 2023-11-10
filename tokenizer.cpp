@@ -10,20 +10,14 @@ enum class TokenType{
     Multiply = 3, Divide = 3,
     Power = 4,
     Number = 5, Identifier = 5,
-    // LinkedNode is hadled manually
-    Init,
-    Show,
-    OpenParen,
-    CloseParen,
+    OpenParen = 6, CloseParen = 6,
+    Init, Show,
 };
-
-
 
 struct Token {
     TokenType type;
     string value;
 };
-
 
 TokenType whichTokenType(string sign){
     TokenType result;
@@ -76,10 +70,12 @@ bool isValidVariableName(const std::string& s){
     }
     return true;
 }
+
 Token makeToken(TokenType type_arg, string value_arg){
     Token token = { .type = type_arg, .value = value_arg,};
     return token;
 }
+
 void tokenizeExpression(string expression, vector<Token>& objectLine, vector<vector<Token>>& mainObject){
     string str = "";
     int exp_length = expression.size();

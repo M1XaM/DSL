@@ -26,39 +26,51 @@ struct Node {
     Node* leftChild;
     Node* rightChild;
     int priority;
-    int depth;
 };
 
-
 bool isOperation(Node& node) {
-    if(node.value == "+" || node.value == "-" || node.value == "*" || node.value == "/" || node.value == "**"){
-        return true;
-    }
-    return false;
+    return (node.value == "+" || node.value == "-" || node.value == "*" || node.value == "/" || node.value == "**");
 }
 
 bool haveValues(Node& node){
-    if(node.rightChild->type == TokenType::Number || node.rightChild->type == TokenType::Identifier){
-        return true;
-    }
-    return false;
-
+    return (node.rightChild->type == TokenType::Number || node.rightChild->type == TokenType::Identifier);
 }
 
+
 Node* performOperation(Node& node, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
-    // Make new node that will numeric node, that will replace old operation node
+    // Make new numeric node, that will replace old operation node
     Node* newNode = new Node();
     newNode->rightChild = nullptr;
     newNode->leftChild = nullptr;
 
+    // Handle variable in math expression
     float leftValue, rightValue, finalValue;
     if(node.leftChild->type == TokenType::Identifier){
-        // Find the identifier's value 
+        for(int i = 0; i < int_names.size(); i++){
+            if(int_names[i] == node.leftChild->value){
+                leftValue = int_values[i];
+            }
+        }
+        for(int i = 0; i < float_names.size(); i++){
+            if(float_names[i] == node.leftChild->value){
+                leftValue = float_values[i];
+            }
+        }
     }else{
         leftValue = stof(node.leftChild->value);
     }
     if(node.rightChild->type == TokenType::Identifier){
         // Find the identifier's value 
+        for(int i = 0; i < int_names.size(); i++){
+            if(int_names[i] == node.leftChild->value){
+                leftValue = int_values[i];
+            }
+        }
+        for(int i = 0; i < float_names.size(); i++){
+            if(float_names[i] == node.leftChild->value){
+                leftValue = float_values[i];
+            }
+        }        
     }else{
         rightValue = stof(node.rightChild->value);
     }
@@ -81,38 +93,61 @@ Node* performOperation(Node& node, vector<int>& int_values, vector<float>& float
     return newNode;
 }
 
-// Postorder travers (LRN)
 void interpreter(Node& root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
-    if(&root == nullptr){
-        return;
-    }
+    if(isOperation(root) && haveValues(root)){
+        root = *(performOperation(root, int_values, float_values, int_names, float_names));
 
-    // Handle Show, Initialization and Assigment
-    if(root.type == TokenType::Show){
+    }else if(root.type == TokenType::Equal && root.leftChild->type == TokenType::Identifier && root.rightChild->type == TokenType::Number){
+        // Assign a value to existent variable
+        cout << "at least this section is started" << endl;
         for(int i = 0; i < int_names.size(); i++){
-            if(int_names[i] == root.rightChild->value){
-                cout << int_values[i] << endl;
+            if(int_names[i] == root.leftChild->value){
+                int_values[i] = static_cast<int>((stof(root.rightChild->value)));
+                cout << "This shit is passed" << endl;
                 return;
             }
         }
-    }else if(root.type == TokenType::Init){
-        if(root.value == "int"){
-            int_names.push_back(root.leftChild->leftChild->value);
-            int_values.push_back(stoi(root.leftChild->rightChild->value));
-        }else if(root.value == "float"){
-            float_names.push_back(root.leftChild->leftChild->value);
-            float_values.push_back(stof(root.leftChild->rightChild->value));
+        for(int i = 0; i < float_names.size(); i++){
+            if(float_names[i] == root.leftChild->value){
+                float_values[i] = stof(root.rightChild->value);
+                return;
+            }
         }
+        cout << "Initialization Error: Variable was not initiate" << endl;
+        exit(1);
+
+    }else if(root.type == TokenType::Init && root.leftChild->type == TokenType::Equal && root.leftChild->rightChild->type == TokenType::Number){
+        // Create new variable with a value
+        Node* varNode = root.leftChild->leftChild;
+        Node* numNode = root.leftChild->rightChild;
+
+        for(int i = 0; i < int_names.size(); i++){
+            if(int_names[i] == varNode->value){
+                cout << "Initialization Error: Cannot initiate one variable two times" << endl;
+                exit(1);
+            }
+        }
+        for(int i = 0; i < float_names.size(); i++){
+            if(float_names[i] == varNode->value){
+                cout << "Initialization Error: Cannot initiate one variable two times" << endl;
+                exit(1);
+            }
+        }
+        if(root.value == "int"){
+            int_names.push_back(varNode->value);
+            int_values.push_back(stoi(numNode->value));
+        }else if(root.value == "float"){
+            float_names.push_back(varNode->value);
+            float_values.push_back(stof(numNode->value));
+        }
+
+    }else if(root.type == TokenType::Show){
+        // Show existent VARIABLE
+        cout << root.leftChild->value << endl;
+    }else if(root.leftChild == nullptr){
+        return;
+    }else{
+        interpreter(*root.leftChild, int_values, float_values, int_names, float_names);
+        interpreter(*root.rightChild, int_values, float_values, int_names, float_names);
     }
-    
-
-    interpreter(*root.leftChild, int_values, float_values, int_names, float_names);
-    interpreter(*root.rightChild, int_values, float_values, int_names, float_names);
-
-    // Perform operation if case
-    if(isOperation(root) && haveValues(root)){
-        root = *(performOperation(root, int_values, float_values, int_names, float_names));
-    }
-
-    
 }
