@@ -94,6 +94,8 @@ Node* performOperation(Node& node, vector<int>& int_values, vector<float>& float
 }
 
 void interpreter(Node& root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
+    cout << "interpreter start" << endl;
+
     if(isOperation(root) && haveValues(root)){
         cout << "operation start" << endl;
         root = *(performOperation(root, int_values, float_values, int_names, float_names));
@@ -116,8 +118,8 @@ void interpreter(Node& root, vector<int>& int_values, vector<float>& float_value
         cout << "Initialization Error: Variable was not initiate" << endl;
         exit(1);
 
-    }else if(root.type == TokenType::Init && root.leftChild->type == TokenType::Equal && root.leftChild->rightChild->type == TokenType::Number){
-        cout << "creating new var start" << endl;
+    }else if(root.type == TokenType::Init){
+        cout << "creating new var" << endl;
         // Create new variable with a value
         Node* varNode = root.leftChild->leftChild;
         Node* numNode = root.leftChild->rightChild;
@@ -147,12 +149,13 @@ void interpreter(Node& root, vector<int>& int_values, vector<float>& float_value
         cout << "showing var start" << endl;
         // Show existent VARIABLE
         cout << root.leftChild->value << endl;
-    }else if(root.leftChild == nullptr){
+    }else if(root.type == TokenType::Number){
         cout << "return start" << endl;
         return;
     }else{
         cout << "recursive start" << endl;
-        interpreter(*root.leftChild, int_values, float_values, int_names, float_names);
-        interpreter(*root.rightChild, int_values, float_values, int_names, float_names);
+        interpreter(*(root.leftChild), int_values, float_values, int_names, float_names);
+        cout << "the right one is choosed" << endl;
+        interpreter(*(root.rightChild), int_values, float_values, int_names, float_names);
     }
 }

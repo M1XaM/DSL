@@ -19,6 +19,7 @@ void interpreter(Node& root,
 
 
 
+
 enum class TokenType{
     Equal = 1,
     Plus = 2, Minus = 2,
@@ -41,6 +42,19 @@ struct Node {
     Node* rightChild;
     int priority;
 };
+
+void preOrderTraversal(Node* root) {
+    if (root != nullptr) {
+        // Do something with the node
+        std::cout << root->value << " ";
+
+        // Traverse left subtree
+        preOrderTraversal(root->leftChild);
+
+        // Traverse right subtree
+        preOrderTraversal(root->rightChild);
+    }
+}
 
 void display_mainObject(vector<Token> lineObject){
     for(int i = 0; i < lineObject.size(); i++){
@@ -81,10 +95,12 @@ int main(){
         root = makeTree(lineObject);
         cout << "Parser passed" << endl;
 
-        interpreter(*root, int_values, float_values, int_names, float_names);
-        cout << "Interpreter passed" << endl;
-        // clearTree(root);
-        cout << "Line " << lineCount << " is passed" << endl;
+        preOrderTraversal(root);
+
+        // interpreter(*root, int_values, float_values, int_names, float_names);
+        // cout << "Interpreter passed" << endl;
+        // // clearTree(root);
+        // cout << "Line " << lineCount << " is passed" << endl;
     }
 
     inputFile.close();
