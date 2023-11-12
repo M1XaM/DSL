@@ -6,13 +6,13 @@
 using namespace std;
 
 enum class TokenType{
-    Equal = 1,
-    Plus = 2, Minus = 2,
-    Multiply = 3, Divide = 3,
-    Power = 4,
-    Number = 5, Identifier = 5,
-    OpenParen = 6, CloseParen = 6,
-    Init, Show,
+    Init = 1, Show = 2,
+    Equal = 3,
+    Plus = 4, Minus = 4,
+    Multiply = 5, Divide = 5,
+    Power = 6,
+    Number = 7, Identifier = 7,
+    OpenParen = 8, CloseParen = 8,
 };
 
 struct Token {
@@ -144,11 +144,21 @@ void interpreter(Node& root, vector<int>& int_values, vector<float>& float_value
             float_values.push_back(stof(numNode->value));
         }
 
-        cout << int_names[0] << endl;
+
     }else if(root.type == TokenType::Show){
         cout << "showing var start" << endl;
         // Show existent VARIABLE
-        cout << root.leftChild->value << endl;
+        // cout << root.leftChild->value << endl;
+        for(int i = 0; i < int_names.size(); i++){
+            if(int_names[i] == root.leftChild->value){
+                cout << int_values[i] << endl;
+            }
+        }
+        for(int i = 0; i < float_names.size(); i++){
+            if(float_names[i] == root.leftChild->value){
+                cout << float_values[i] << endl;
+            }
+        }
     }else if(root.type == TokenType::Number){
         cout << "return start" << endl;
         return;

@@ -20,14 +20,15 @@ void interpreter(Node& root,
 
 
 
+
 enum class TokenType{
-    Equal = 1,
-    Plus = 2, Minus = 2,
-    Multiply = 3, Divide = 3,
-    Power = 4,
-    Number = 5, Identifier = 5,
-    OpenParen = 6, CloseParen = 6,
-    Init, Show,
+    Init = 1, Show = 2,
+    Equal = 3,
+    Plus = 4, Minus = 4,
+    Multiply = 5, Divide = 5,
+    Power = 6,
+    Number = 7, Identifier = 7,
+    OpenParen = 8, CloseParen = 8,
 };
 
 struct Token {
@@ -42,25 +43,12 @@ struct Node {
     Node* rightChild;
     int priority;
 };
-
-void preOrderTraversal(Node* root) {
-    if (root != nullptr) {
-        // Do something with the node
-        std::cout << root->value << " ";
-
-        // Traverse left subtree
-        preOrderTraversal(root->leftChild);
-
-        // Traverse right subtree
+void preOrderTraversal(Node* root){
+    if(root != nullptr){
+        cout << root->value << " ";
         preOrderTraversal(root->rightChild);
+        preOrderTraversal(root->leftChild);
     }
-}
-
-void display_mainObject(vector<Token> lineObject){
-    for(int i = 0; i < lineObject.size(); i++){
-        cout << lineObject[i].value << " ";
-    }
-    cout << endl;
 }
 
 int main(){
@@ -88,19 +76,15 @@ int main(){
 
         vector<Token> lineObject;
         tokenizer(line, lineCount, lineObject);
-        cout << "Tokenizer passed" << endl;
-        display_mainObject(lineObject); 
+
 
         Node* root = new Node();
-        root = makeTree(lineObject);
-        cout << "Parser passed" << endl;
+        root = makeTree(lineObject);    
+        
 
-        preOrderTraversal(root);
 
-        // interpreter(*root, int_values, float_values, int_names, float_names);
-        // cout << "Interpreter passed" << endl;
-        // // clearTree(root);
-        // cout << "Line " << lineCount << " is passed" << endl;
+        interpreter(*root, int_values, float_values, int_names, float_names);
+        clearTree(root);
     }
 
     inputFile.close();
