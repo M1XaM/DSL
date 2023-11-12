@@ -28,7 +28,7 @@ enum class TokenType{
     Multiply = 5, Divide = 5,
     Power = 6,
     Number = 7, Identifier = 7,
-    OpenParen = 8, CloseParen = 8,
+    OpenParen = 8, CloseParen = 9,
 };
 
 struct Token {
@@ -76,6 +76,7 @@ int main(){
 
         vector<Token> lineObject;
         tokenizer(line, lineCount, lineObject);
+        if(lineObject.size() == 0) continue;
 
 
         Node* root = new Node();

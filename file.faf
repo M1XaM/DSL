@@ -1,4 +1,4 @@
 int a = 34
-float b = 12
 show a
-show b
+
+

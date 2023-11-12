@@ -12,7 +12,7 @@ enum class TokenType{
     Multiply = 5, Divide = 5,
     Power = 6,
     Number = 7, Identifier = 7,
-    OpenParen = 8, CloseParen = 8,
+    OpenParen = 8, CloseParen = 9,
 };
 
 struct Token {
@@ -94,8 +94,7 @@ Node* performOperation(Node& node, vector<int>& int_values, vector<float>& float
 }
 
 void interpreter(Node& root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
-    cout << "interpreter start" << endl;
-
+    
     if(isOperation(root) && haveValues(root)){
         cout << "operation start" << endl;
         root = *(performOperation(root, int_values, float_values, int_names, float_names));
@@ -148,17 +147,24 @@ void interpreter(Node& root, vector<int>& int_values, vector<float>& float_value
     }else if(root.type == TokenType::Show){
         cout << "showing var start" << endl;
         // Show existent VARIABLE
-        // cout << root.leftChild->value << endl;
+        int flag = 1;
         for(int i = 0; i < int_names.size(); i++){
             if(int_names[i] == root.leftChild->value){
                 cout << int_values[i] << endl;
+                flag = 0;
             }
         }
         for(int i = 0; i < float_names.size(); i++){
             if(float_names[i] == root.leftChild->value){
                 cout << float_values[i] << endl;
+                flag = 0;
             }
         }
+        if(flag){
+            cout << "Initialization Error: Variable was not initiate" << endl;
+            exit(1);
+        }
+
     }else if(root.type == TokenType::Number){
         cout << "return start" << endl;
         return;

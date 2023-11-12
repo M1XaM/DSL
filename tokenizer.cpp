@@ -112,7 +112,7 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
     regex CommentLine("[\\s]*#.*[\\s]*");
     regex ShowLine("[\\s]*show\\s+([a-zA-Z]\\w*)[\\s]*");
 
-    regex InitializationLine("[\\s]*(int|float)\\s+([a-zA-Z]+)[\\s]*=[\\s]*([0-9]+)[\\s]*");
+    regex InitializationLine("[\\s]*(int|float)\\s+([a-zA-Z]+)[\\s]*=[\\s]*([0-9]+(.[0-9]+)?)[\\s]*");
     regex AssigmentLine("\\s*([a-zA-Z]\\w*)\\s*=\\s*(.*)\\s*");
     regex OperationLine("\\s*([a-zA-Z]\\w*)\\s*(\\+|-|\\*|/|\\*\\*)=\\s*(.*)\\s*");
 
