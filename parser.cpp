@@ -107,45 +107,46 @@ Node* createNode(Token token){
 
 // Function that modifies a vector and retains only the specified range
 void cutVectorRange(vector<Token>& vec, int startIndex, int endIndex) {
-    // Ensure that the indices are within bounds
     startIndex = std::max(0, startIndex);
     endIndex = std::min(static_cast<int>(vec.size()), endIndex);
 
-    // Erase elements outside the specified range
     vec.erase(vec.begin() + endIndex, vec.end());
     vec.erase(vec.begin(), vec.begin() + startIndex);
 }
 
-vector<Token> cutThisShit(vector<Token>& lineObject, int start, int end){
-    vector<Token> newVec;
-    for(int i = start; i <= end; i++){
-        newVec.push_back(lineObject[i]);
-    }
-    return newVec;
-}
-
-Node* mathExpression(vector<Token>& lineObject){
+Node* mathExpression(vector<Token>& lineObject){  // add paratheses verification before first while loop
     Node* root = createNode(lineObject[0]);
-    for(int i = 1; i < lineObject.size(); i++){
-    // while(static_cast<int>(lineObject.size()) > 0){
-    // do{
-        Node* workingNode = createNode(lineObject[i]);
+    lineObject.erase(lineObject.begin());
+    while(static_cast<int>(lineObject.size()) > 0){
+        Node* workingNode = createNode(lineObject[0]);
         Node* parentNode = root;
         Node* previousNode = nullptr;
 
         if(workingNode->type == TokenType::CloseParen){
-            // cutVectorRange(lineObject, 1, lineObject.size());
-            // lineObject = cutThisShit(lineObject, 1, lineObject.size());
+            cutVectorRange(lineObject, 1, lineObject.size());
             return root;
         }
 
         while(true){
+            cout << workingNode->value << endl;
             if(workingNode->priority > parentNode->priority){
                 if(parentNode->leftChild == nullptr){
-                    parentNode->leftChild = workingNode;
+                    if(workingNode->type == TokenType::OpenParen){
+                       cutVectorRange(lineObject, 1, lineObject.size());
+                       parentNode->leftChild = mathExpression(lineObject); 
+                       parentNode->leftChild->priority = static_cast<int>(TokenType::OpenParen);
+                    }else{
+                        parentNode->leftChild = workingNode;
+                    }
                     break;
                 }else if(parentNode->rightChild == nullptr){
-                    parentNode->rightChild = workingNode;
+                    if(workingNode->type == TokenType::OpenParen){
+                       cutVectorRange(lineObject, 1, lineObject.size());
+                       parentNode->rightChild = mathExpression(lineObject); 
+                       parentNode->rightChild->priority = static_cast<int>(TokenType::OpenParen);
+                    }else{
+                        parentNode->rightChild = workingNode;
+                    }
                     break;
                 }else{
                     previousNode = parentNode;
@@ -169,23 +170,19 @@ Node* mathExpression(vector<Token>& lineObject){
                     }
                 }else{
                     if(workingNode->type == TokenType::OpenParen){
-                        // cutVectorRange(lineObject, 1, lineObject.size());
-                        lineObject = cutThisShit(lineObject, 1, lineObject.size());
+                        cutVectorRange(lineObject, 1, lineObject.size());
                         previousNode->leftChild = mathExpression(lineObject);
                         previousNode->leftChild->priority = static_cast<int>(TokenType::OpenParen);
                     }else{
-                        previousNode->leftChild = workingNode;
-                        previousNode->leftChild->rightChild = parentNode;
+                        previousNode->rightChild = workingNode;
+                        previousNode->rightChild->leftChild = parentNode;
                     }
                 }
                 break;
             }
         }
-        // cutVectorRange(lineObject, 1, lineObject.size()); 
-        // lineObject.erase(lineObject.begin());
-        // lineObject = cutThisShit(lineObject, 1, lineObject.size());
+        lineObject.erase(lineObject.begin());
     }
-    // }while(static_cast<int>(lineObject.size()) > 0);
     return root;
 }
 
@@ -204,10 +201,12 @@ Node* makeTree(vector<Token>& lineObject){
         // cout << root->leftChild->leftChild->rightChild->value << " " << int(root->leftChild->leftChild->leftChild->leftChild->type) << endl;
         // cout << endl;
 
-        // cout << root->leftChild->rightChild->value << endl;
+        // cout << root->leftChild->rightChild->value << " " << int(root->leftChild->rightChild->type)<< endl;
         // cout << root->leftChild->rightChild->rightChild->value << endl;
     }else{
         root = mathExpression(lineObject);
     }
+
+
     return root;
 }
