@@ -82,8 +82,8 @@ int main(){
         Node* root = new Node();
         root = makeTree(lineObject);    
         
-        preOrderTraversal(root);
-        cout << endl;
+        // preOrderTraversal(root);
+        // cout << endl;
 
         // interpreter(*root, int_values, float_values, int_names, float_names);
         clearTree(root);
