@@ -11,16 +11,10 @@ Comments start with #
 Existing instructions:
 # Comments
 <int/float> <varname> = <math expression>
-<varname> <+/-/*/ / /**>= <math expression>
+<varname> = <math expression>
 show <varname>
 
-Example of a program:
-int a=12
-# Variable a - initialized
-a /= 2 + 3
-show a
-a**=  (1+1)
-show a
+(math expression are made from operators +, -, /, *, ** and variables/integers/float numbers)
 
 
 

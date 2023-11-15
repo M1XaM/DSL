@@ -52,8 +52,8 @@ Node* createNode(Token token){
 
 Node* mathExpression(vector<Token>& lineObject){
     Node* root = createNode(lineObject[0]);
-
-    for(int i = 1; i < lineObject.size(); i++){
+    lineObject.erase(lineObject.begin());
+    for(int i = 0; i < lineObject.size(); i++){
         Node* workingNode = createNode(lineObject[i]);
         Node* parentNode = root;
         Node* previousNode = nullptr;
@@ -71,44 +71,29 @@ Node* mathExpression(vector<Token>& lineObject){
                 }
             }else if(workingNode->priority <= parentNode->priority){
                 if(previousNode == nullptr){ // we are on root node
-                    if(root->leftChild == nullptr){
-                        Node* tempNode = root;
-                        root = workingNode;
-                        root->leftChild = tempNode;
-                        break;
-                    }else if(root->rightChild == nullptr){
-                        Node* tempNode = root;
-                        root = workingNode;
-                        root->rightChild = tempNode;
-                        break;
-                    }else{
-                        previousNode = parentNode;
-                        parentNode = parentNode->rightChild;
-                    }
+                    workingNode->leftChild = root;
+                    root = workingNode;
+                    break;
                 }else{
-                    
-                    previousNode->leftChild = workingNode;
-                    previousNode->leftChild->rightChild = parentNode;
+                    previousNode->rightChild = workingNode;
+                    workingNode->leftChild = parentNode;
+                    break;
                 }
-                break;
-            }
-            
-        }   
+            }   
+        }
     }
-
-    // cout << root->leftChild->value << endl;
-    // cout << root->rightChild << endl;
     return root;
 }
 
 Node* makeTree(vector<Token>& lineObject){
     Node* root = createNode(lineObject[0]);
     if(root->type == TokenType::Show){
-        root->leftChild = createNode(lineObject[1]); // we can show just the variables
+        root->leftChild = createNode(lineObject[1]);
     }else if(root->type == TokenType::Init){
-        
         lineObject.erase(lineObject.begin());
         root->leftChild = mathExpression(lineObject);
+    }else{
+        root = mathExpression(lineObject);
         // cout << root->value << " " << int(root->type) << endl;
         // cout << root->leftChild->value << " " << int(root->leftChild->type) << endl;
         // cout << root->leftChild->leftChild->value << " " << int(root->leftChild->leftChild->type) << endl;
@@ -118,8 +103,11 @@ Node* makeTree(vector<Token>& lineObject){
 
         // cout << root->leftChild->rightChild->value << endl;
         // cout << root->leftChild->rightChild->rightChild->value << endl;
-    }else{
-        root = mathExpression(lineObject);
+
+        // cout << root->rightChild->value << endl;
+        // cout << root->rightChild->leftChild->value << endl;
+        // cout << root->rightChild->rightChild->value << endl;
     }
+
     return root;
 }

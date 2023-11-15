@@ -1,4 +1,3 @@
-int a = 34
-float b = 12
-show a
-show b
+int a = 9.3453455
+a = 3 + 3
+show a 

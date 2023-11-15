@@ -30,14 +30,22 @@ TokenType whichTokenType(string sign){
             break;
         case '*':
             result = TokenType::Multiply;
-                break;
+            break;
         case '/':
             result = TokenType::Divide;
             break;
         }
     return result;
-    }
+}
 
+bool isOperator(string str){
+    string plus = "+";
+    string minus = "-";
+    string multiplication = "*";
+    string division = "/";
+    
+    return str == plus || str == minus || str == multiplication || str == division;
+}
 
 
 bool isInteger(const std::string& s){
@@ -53,7 +61,6 @@ bool isFloat(const std::string& s){
     if(s.empty() || (!isdigit(s[0]) && s[0] != '-' && s[0] != '+')){
         return false;
     }
-
     char* endPtr;
     strtof(s.c_str(), &endPtr);
     return (*endPtr == '\0');
@@ -84,6 +91,8 @@ void tokenizeExpression(string expression, vector<Token>& lineObject){
             if(str.length() != 0){
                 if(isInteger(str) || isFloat(str)){
                     lineObject.push_back(makeToken(TokenType::Number, str));
+                }else if(isOperator(str)){
+                    lineObject.push_back(makeToken(whichTokenType(str), str));
                 }else{
                     lineObject.push_back(makeToken(TokenType::Identifier, str));
                 }
@@ -112,19 +121,16 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
     regex CommentLine("[\\s]*#.*[\\s]*");
     regex ShowLine("[\\s]*show\\s+([a-zA-Z]\\w*)[\\s]*");
 
-    regex InitializationLine("[\\s]*(int|float)\\s+([a-zA-Z]+)[\\s]*=[\\s]*([0-9]+)[\\s]*");
+    regex InitializationLine("[\\s]*(int|float)\\s+([a-zA-Z]+)[\\s]*=[\\s]*([0-9]+(.[0-9]+)?)[\\s]*"); // modified
     regex AssigmentLine("\\s*([a-zA-Z]\\w*)\\s*=\\s*(.*)\\s*");
-    regex OperationLine("\\s*([a-zA-Z]\\w*)\\s*(\\+|-|\\*|/|\\*\\*)=\\s*(.*)\\s*");
 
-    regex LoopLine("[\\s]*for\\s+([a-zA-Z]\\w*)\\s+to\\s+([a-zA-Z_]\\w*|\\d+)\\s+repeat[\\s]*");
-    regex ConditionalLine("[\\s]*if\\s+([a-zA-Z_]\\w*|\\d+(\\.\\d+)?|\\.\\d+)\\s+(>|<|==|!=|>=|<=)\\s+([a-zA-Z_]\\w*|\\d+(\\.\\d+)?|\\.\\d+)\\s+then[\\s]*");
-    regex WrongDataType("[\\s]*var\\s+int\\s+([a-zA-Z_]+)[\\s]*=[\\s]*([0-9]+(\\.([0-9]+)?)?)[\\s]*");
+    // regex ConditionalLine("[\\s]*if\\s+([a-zA-Z_]\\w*|\\d+(\\.\\d+)?|\\.\\d+)\\s+(>|<|==|!=|>=|<=)\\s+([a-zA-Z_]\\w*|\\d+(\\.\\d+)?|\\.\\d+)\\s+then[\\s]*");
+    // regex LoopLine("[\\s]*for\\s+([a-zA-Z]\\w*)\\s+to\\s+([a-zA-Z_]\\w*|\\d+)\\s+repeat[\\s]*");
 
     
     smatch parsingArray;
     if(regex_match(line, CommentLine)){
     }else if(regex_match(line, EmptyLine)){
-
     }else if(regex_match(line, InitializationLine)){
         if(regex_search(line, parsingArray, InitializationLine)){
             lineObject.push_back(makeToken(TokenType::Init, parsingArray[1]));
@@ -140,7 +146,7 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
         }
 
     }else if(regex_match(line, AssigmentLine)){
-        if(regex_match(line, parsingArray, AssigmentLine)){
+        if(regex_search(line, parsingArray, AssigmentLine)){
             lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[1]));
             lineObject.push_back(makeToken(TokenType::Equal, "="));
             
@@ -148,25 +154,8 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
             tokenizeExpression(expression, lineObject);
 
         }
-    }else if(regex_match(line, OperationLine)){
-        if(regex_search(line, parsingArray, OperationLine)){
-            lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[1]));
-            lineObject.push_back(makeToken(TokenType::Equal, "="));
-            lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[1]));
-            lineObject.push_back(makeToken(whichTokenType(parsingArray[2].str()), parsingArray[2]));
-            lineObject.push_back(makeToken(TokenType::OpenParen, "("));
-
-            string expression = parsingArray[3].str();
-            tokenizeExpression(expression, lineObject);
-
-            lineObject.push_back(makeToken(TokenType::CloseParen, ")"));
-        }
-
-    }else if(regex_match(line, LoopLine)){
-    }else if(regex_match(line, ConditionalLine)){
-    }else if(regex_match(line, WrongDataType)){
-        cout << "Initialization Error: Wrong data type (on line number " << lineCount << ")" << endl;
-        exit(1);
+    // }else if(regex_match(line, LoopLine)){
+    // }else if(regex_match(line, ConditionalLine)){
     }else{
         cout << "Syntax Error (on line number " << lineCount << ")" << endl;
         exit(1);

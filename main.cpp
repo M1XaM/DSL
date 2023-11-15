@@ -10,15 +10,11 @@ using namespace std;
 void tokenizer(string line, int lineCount, vector<Token>& lineObject);
 Node* makeTree(vector<Token>& lineObject);
 void clearTree(Node* root);
-void interpreter(Node& root, 
+void interpreter(Node* root, 
                 vector<int>& int_values,
                 vector<float>& float_values,
                 vector<string>& int_names,
                 vector<string>& float_names);
-
-
-
-
 
 
 enum class TokenType{
@@ -43,16 +39,18 @@ struct Node {
     Node* rightChild;
     int priority;
 };
-void preOrderTraversal(Node* root){
+
+void travers(Node* root){
     if(root != nullptr){
         cout << root->value << " ";
-        preOrderTraversal(root->rightChild);
-        preOrderTraversal(root->leftChild);
+        travers(root->leftChild);
+        travers(root->rightChild);
+        
     }
 }
 
-int main(){
 
+int main(){
     // string filename;
     // cout << "Enter the name of exisiting file: ";
     // cin >> filename;
@@ -73,20 +71,27 @@ int main(){
     int lineCount = 0;
     while(getline(inputFile, line)){
         lineCount += 1;
-
+        
         vector<Token> lineObject;
         tokenizer(line, lineCount, lineObject);
+        if(lineObject.size() == 0) continue;
 
-
-        Node* root = new Node();
-        root = makeTree(lineObject);    
+        // for(int i = 0; i < lineObject.size(); i++){
+        //     cout << " <" << lineObject[i].value << "> ";
+        // }
+        // cout << '\n';
         
+    
+        
+        Node* root = new Node();
+        root = makeTree(lineObject);
+        // travers(root);
+        // printBinaryTree(root);
+        // cout << '\n';
 
-
-        interpreter(*root, int_values, float_values, int_names, float_names);
+        interpreter(root, int_values, float_values, int_names, float_names);
         clearTree(root);
     }
-
     inputFile.close();
     return 0;
 }

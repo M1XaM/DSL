@@ -10,6 +10,6 @@ enum class TokenType;
 struct Token;
 struct Node;
 
-void interpreter(Node& root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names);
+void interpreter(Node* root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names);
 
 #endif
