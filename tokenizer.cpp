@@ -5,13 +5,13 @@
 using namespace std;
 
 enum class TokenType{
-    Init = 1, Show = 2,
-    Equal = 3,
-    Plus = 4, Minus = 4,
-    Multiply = 5, Divide = 5,
-    Power = 6,
-    Number = 7, Identifier = 7,
-    OpenParen = 8, CloseParen = 8,
+    Equal = 1,
+    Plus = 2, Minus = 2,
+    Multiply = 3, Divide = 3,
+    Power = 4,
+    Number = 5, Identifier = 5,
+    OpenParen = 6, CloseParen = 6,
+    Init, Show,
 };
 
 struct Token {

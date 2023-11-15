@@ -143,10 +143,10 @@ void interpreter(Node& root, vector<int>& int_values, vector<float>& float_value
             float_values.push_back(stof(numNode->value));
         }
 
-
+        cout << int_names[0] << endl;
     }else if(root.type == TokenType::Show){
         cout << "showing var start" << endl;
-        // Show existent VARIABLE
+        // Show existent variable
         int flag = 1;
         for(int i = 0; i < int_names.size(); i++){
             if(int_names[i] == root.leftChild->value){
@@ -165,6 +165,7 @@ void interpreter(Node& root, vector<int>& int_values, vector<float>& float_value
             exit(1);
         }
 
+        cout << root.leftChild->value << endl;
     }else if(root.type == TokenType::Number){
         cout << "return start" << endl;
         return;

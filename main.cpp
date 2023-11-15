@@ -20,7 +20,6 @@ void interpreter(Node& root,
 
 
 
-
 enum class TokenType{
     Init = 1, Show = 2,
     Equal = 3,
@@ -49,6 +48,13 @@ void preOrderTraversal(Node* root){
         preOrderTraversal(root->leftChild);
         preOrderTraversal(root->rightChild);
     }
+}
+
+void display_mainObject(vector<Token> lineObject){
+    for(int i = 0; i < lineObject.size(); i++){
+        cout << lineObject[i].value << " ";
+    }
+    cout << endl;
 }
 
 int main(){
@@ -85,7 +91,7 @@ int main(){
         // preOrderTraversal(root);
         // cout << endl;
 
-        // interpreter(*root, int_values, float_values, int_names, float_names);
+        interpreter(*root, int_values, float_values, int_names, float_names);
         clearTree(root);
     }
 

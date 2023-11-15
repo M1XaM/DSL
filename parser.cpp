@@ -26,10 +26,8 @@ struct Node {
     int priority;
 };
 
-void clearTree(Node* root){
-    // cout << root->value << endl;
-    if(root->leftChild == nullptr && root->rightChild == nullptr){
-        delete root;
+void clearTree(Node* root) {
+    if (root == nullptr) {
         return;
     }
     if(root->leftChild != nullptr){
@@ -38,6 +36,7 @@ void clearTree(Node* root){
     if(root->rightChild != nullptr){
         clearTree(root->rightChild);
     }
+    delete root;
 }
 
 Node* createNode(Token token){
@@ -50,225 +49,53 @@ Node* createNode(Token token){
     return newNode;
 }
 
-// Node* mathExpression(vector<Token>& lineObject){
-//     Node* root = createNode(lineObject[0]);
-//     for(int i = 1; i < lineObject.size(); i++){
-//         Node* workingNode = createNode(lineObject[i]);
-//         Node* parentNode = root;
-//         Node* previousNode = nullptr;
-//         while(true){
-//             if(workingNode->priority > parentNode->priority){
-//                 if(parentNode->leftChild == nullptr){
-//                     parentNode->leftChild = workingNode;
-//                     break;
-//                 }else if(parentNode->rightChild == nullptr){
-//                     parentNode->rightChild = workingNode;
-//                     break;
-//                 }else{
-//                     previousNode = parentNode;
-//                     parentNode = parentNode->rightChild;
-//                 }
-//             }else if(workingNode->priority <= parentNode->priority){
-//                 if(previousNode == nullptr){ // we are on root node
-//                     if(root->leftChild == nullptr){
-//                         Node* tempNode = root;
-//                         root = workingNode;
-//                         root->leftChild = tempNode;
-//                         break;
-//                     }else if(root->rightChild == nullptr){
-//                         Node* tempNode = root;
-//                         root = workingNode;
-//                         root->rightChild = tempNode;
-//                         break;
-//                     }else{
-//                         previousNode = parentNode;
-//                         parentNode = parentNode->rightChild;
-//                     }
-//                 }else{
-                    
-//                     previousNode->leftChild = workingNode;
-//                     previousNode->leftChild->rightChild = parentNode;
-//                 }
-//                 break;
-//             }
-            
-//         }   
-//     }
-//     return root;
-// }
-
-
-
-
-// Node* mathExpression(vector<Token>& lineObject){
-//     Node* root = createNode(lineObject[0]);
-//     lineObject.erase(lineObject.begin());
-
-//     while(!lineObject.empty()){
-//         Node* workingNode = createNode(lineObject[0]);
-//         lineObject.erase(lineObject.begin());
-//         Node* parentNode = root;
-//         Node* previousNode = nullptr;
-
-//         if(workingNode->type == TokenType::CloseParen){  // If close paratheses - we have to return to the main tree
-//             return root;
-//         }
-
-//         while(true){
-//             if(workingNode->priority > parentNode->priority){  // See if go deeper
-//                 if(parentNode->leftChild == nullptr){  // Try left subtree
-//                     if(workingNode->type == TokenType::OpenParen){  // See if this are paratheses and make another tree
-//                         parentNode->leftChild = mathExpression(lineObject);
-//                         parentNode->leftChild->priority = static_cast<int>(TokenType::OpenParen);
-//                        break;
-//                     }else{  // Just go on left subtree
-//                         parentNode->leftChild = workingNode;
-//                         break;
-//                     }
-//                 }else if(parentNode->rightChild == nullptr){  // Try right subtree
-//                     if(workingNode->type == TokenType::OpenParen){  // See if this are paratheses and make another tree
-
-//                         parentNode->rightChild = mathExpression(lineObject); 
-//                         parentNode->rightChild->priority = static_cast<int>(TokenType::OpenParen);
-//                         break;
-//                     }else{  // Just go on right subtree
-//                         parentNode->rightChild = workingNode;
-//                         break;
-//                     }
-//                 }else{  // Just go deeper
-//                     cout << "one down" << endl;
-//                     previousNode = parentNode;
-//                     parentNode = parentNode->rightChild;
-//                 }
-
-
-//             }else if(workingNode->priority <= parentNode->priority){  // Find his place, begin to switch
-//                 if(previousNode == nullptr){  // We are on root node
-//                     if(root->leftChild == nullptr){  // Try left subtree
-//                         Node* tempNode = root;
-//                         root = workingNode;
-//                         root->leftChild = tempNode;
-//                         break;
-//                     }else if(root->rightChild == nullptr){  // Try right subtree
-//                         Node* tempNode = root;
-//                         root = workingNode;
-//                         root->rightChild = tempNode;
-//                         break;
-//                     }else{  // 4 nodes in total and workingNode have smaller priority than root
-//                         Node* tempNode = root;
-//                         root = workingNode;
-//                         root->leftChild = tempNode;
-//                         break;
-//                     }
-//                 }else{  // We are not on root
-//                     if(workingNode->type == TokenType::OpenParen){  // See if this are paratheses and make another tree
-//                         previousNode->rightChild = mathExpression(lineObject);
-//                         previousNode->rightChild->priority = static_cast<int>(TokenType::OpenParen);
-//                         break;
-//                     }else{  // Just switch
-//                         previousNode->rightChild = workingNode;
-//                         previousNode->rightChild->leftChild = parentNode;
-//                         break;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     return root;
-// }
-
-Node* mathExpression(vector<Token>& lineObject);
-void timeToSwitch(vector<Token>& lineObject, Node* root, Node* workingNode, Node* parentNode, Node* previousNode){
-                if(previousNode == nullptr){  // We are on root node
-                    if(root->leftChild == nullptr){  // Try left subtree
+Node* mathExpression(vector<Token>& lineObject){
+    Node* root = createNode(lineObject[0]);
+    for(int i = 1; i < lineObject.size(); i++){
+        Node* workingNode = createNode(lineObject[i]);
+        Node* parentNode = root;
+        Node* previousNode = nullptr;
+        while(true){
+            if(workingNode->priority > parentNode->priority){
+                if(parentNode->leftChild == nullptr){
+                    parentNode->leftChild = workingNode;
+                    break;
+                }else if(parentNode->rightChild == nullptr){
+                    parentNode->rightChild = workingNode;
+                    break;
+                }else{
+                    previousNode = parentNode;
+                    parentNode = parentNode->rightChild;
+                }
+            }else if(workingNode->priority <= parentNode->priority){
+                if(previousNode == nullptr){ // we are on root node
+                    if(root->leftChild == nullptr){
                         Node* tempNode = root;
                         root = workingNode;
                         root->leftChild = tempNode;
-                        return;
-                    }else if(root->rightChild == nullptr){  // Try right subtree
+                        break;
+                    }else if(root->rightChild == nullptr){
                         Node* tempNode = root;
                         root = workingNode;
                         root->rightChild = tempNode;
-                        return;
-                    }else{  // 4 nodes in total and workingNode have smaller priority than root
-                        Node* tempNode = root;
-                        root = workingNode;
-                        root->leftChild = tempNode;
-                        return;
+                        break;
+                    }else{
+                        previousNode = parentNode;
+                        parentNode = parentNode->rightChild;
                     }
-                }else{  // We are not on root
-                    if(workingNode->type == TokenType::OpenParen){  // See if this are paratheses and make another tree
-                        previousNode->rightChild = mathExpression(lineObject);
-                        previousNode->rightChild->priority = static_cast<int>(TokenType::OpenParen);
-                        return;
-                    }else{  // Just switch
-                        previousNode->rightChild = workingNode;
-                        previousNode->rightChild->leftChild = parentNode;
-                        return;
-                    }
+                }else{
+                    
+                    previousNode->rightChild = workingNode;
+                    previousNode->rightChild->leftChild = parentNode;
                 }
-}
-
-void goDeeper(vector<Token>& lineObject, Node* root, Node* workingNode, Node* parentNode, Node* previousNode){
-                if(parentNode->leftChild == nullptr){  // Try left subtree
-                    if(workingNode->type == TokenType::OpenParen){  // See if this are paratheses and make another tree
-
-                        
-
-                        parentNode->leftChild = mathExpression(lineObject);
-                        parentNode->leftChild->priority = static_cast<int>(TokenType::OpenParen);
-                        return;
-                    }else{  // Just go on left subtree
-                        parentNode->leftChild = workingNode;
-                        return;
-                    }
-                }else if(parentNode->rightChild == nullptr){  // Try right subtree
-                    if(workingNode->type == TokenType::OpenParen){  // See if this are paratheses and make another tree
-
-                        
-
-                        parentNode->rightChild = mathExpression(lineObject); 
-                        parentNode->rightChild->priority = static_cast<int>(TokenType::OpenParen);
-                        return;
-                    }else{  // Just go on right subtree
-                        parentNode->rightChild = workingNode;
-                        return;
-                    }
-                }else{  // Just go deeper
-                    previousNode = parentNode;
-                    parentNode = parentNode->rightChild;
-                }                
-}
-
-Node* mathExpression(vector<Token>& lineObject){
-    for(int i = 0; i < lineObject.size(); i++){
-        cout << lineObject[i].value;
-    }
-    cout << endl;
-
-    Node* root = createNode(lineObject[0]);
-    lineObject.erase(lineObject.begin());
-
-    while(!lineObject.empty()){
-        Node* workingNode = createNode(lineObject[0]);
-        lineObject.erase(lineObject.begin());
-        Node* parentNode = root;
-        Node* previousNode = nullptr;
-
-        if(workingNode->type == TokenType::CloseParen){  // If close paratheses - we have to return to the main tree
-            return root;
-        }
-
-        while(true){
-            if(workingNode->priority > parentNode->priority){  // See if go deeper
-                goDeeper(lineObject, root, workingNode, parentNode, previousNode);
-            }else if(workingNode->priority <= parentNode->priority){  // Find his place
-                timeToSwitch(lineObject, root, workingNode, parentNode, previousNode);
+                break;
             }
-        }
+            
+        }   
     }
     return root;
 }
+
 
 Node* makeTree(vector<Token>& lineObject){
     Node* root = createNode(lineObject[0]);
