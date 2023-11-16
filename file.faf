@@ -1,3 +1,13 @@
-int a = 9.3453455
-a = 3 + 3
+# Basic example
+int a = 25
+float b = 2.5
+
+a = a / b
 show a 
+
+b = 14 / 7 * 3 + 1 * 4 + 5
+show b
+
+# Implicit conversion
+int pi = 3.1428
+show pi

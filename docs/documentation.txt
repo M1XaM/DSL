@@ -2,19 +2,18 @@ General specifications:
 Input: File
 Output: Terminal
 Variables naming: only letters
-Case sensitive
 Each statement must begin with new line
-Comments start with #
+Each element from a math expression must be separated by a space
+Comments start with # and free lines are acceptable
 
 
 
 Existing instructions:
-# Comments
-<int/float> <varname> = <math expression>
+<int/float> <varname> = <number>
 <varname> = <math expression>
 show <varname>
 
-(math expression are made from operators +, -, /, *, ** and variables/integers/float numbers)
+(math expression are made from operators +, -, /, * and variables/integers/float numbers)
 
 
 

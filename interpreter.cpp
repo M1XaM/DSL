@@ -1,8 +1,6 @@
 #include<iostream>
 #include<vector>
 #include<string>
-#include<stack>
-#include<cmath>
 using namespace std;
 
 enum class TokenType{
@@ -23,56 +21,54 @@ struct Token {
 struct Node {
     TokenType type;
     string value;
-    Node* leftChild;
-    Node* rightChild;
+    Node* left;
+    Node* right;
     int priority;
 };
 
 bool isOperation(Node* node) {
-    return (node->value == "+" || node->value == "-" || node->value == "*" || node->value == "/" || node->value == "**");
+    return (node->value == "+" || node->value == "-" || node->value == "*" || node->value == "/");
 }
 
 bool haveValues(Node* node){
-    return (node->leftChild->type == TokenType::Number || node->leftChild->type == TokenType::Identifier) &&
-           (node->rightChild->type == TokenType::Number || node->rightChild->type == TokenType::Identifier);
+    return (node->left->type == TokenType::Number || node->left->type == TokenType::Identifier) &&
+           (node->right->type == TokenType::Number || node->right->type == TokenType::Identifier);
 }
 
 
-Node* performOperation(Node* node, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
+void performOperation(Node* node, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
     float leftValue, rightValue, finalValue;
 
-    // Handle variable in math expression
-    if(isalpha((node->leftChild->value)[0])){
+
+    if(isalpha((node->left->value)[0])){
         for(int i = 0; i < int_names.size(); i++){
-            if(int_names[i] == node->leftChild->value){
+            if(int_names[i] == node->left->value){
                 leftValue = int_values[i];
             }
         }
         for(int i = 0; i < float_names.size(); i++){
-            if(float_names[i] == node->leftChild->value){
+            if(float_names[i] == node->left->value){
                 leftValue = float_values[i];
             }
         }
     }else{
-        leftValue = stof(node->leftChild->value);
+        leftValue = stof(node->left->value);
     }
 
-    if(isalpha((node->leftChild->value)[0])){
+    if(isalpha((node->right->value)[0])){
         for(int i = 0; i < int_names.size(); i++){
-            if(int_names[i] == node->leftChild->value){
+            if(int_names[i] == node->right->value){
                 rightValue = int_values[i];
             }
         }
         for(int i = 0; i < float_names.size(); i++){
-            if(float_names[i] == node->leftChild->value){
+            if(float_names[i] == node->right->value){
                 rightValue = float_values[i];
             }
         }        
     }else{
-        rightValue = stof(node->rightChild->value);
+        rightValue = stof(node->right->value);
     }
-
-
 
     if(node->value == "+"){
         finalValue = leftValue + rightValue;
@@ -81,52 +77,43 @@ Node* performOperation(Node* node, vector<int>& int_values, vector<float>& float
     }else if(node->value == "*"){
         finalValue = leftValue * rightValue;
     }else if(node->value == "/"){
+        if(rightValue == 0){
+            cout << "Division Error: You cannot divide by zero" << endl;
+            exit(1);
+        }
         finalValue = leftValue / rightValue;
-    }else if(node->value == "**"){
-        finalValue = pow(leftValue, rightValue);
     }
 
-    // Make new numeric node, that will replace old operation node
-    Node* newNode = new Node();
-    newNode->rightChild = nullptr;
-    newNode->leftChild = nullptr;
-    newNode->type = TokenType::Number;
-    newNode->priority = static_cast<int>(newNode->type);
-    newNode->value = to_string(finalValue);
-
-    return newNode;
+    node->right = nullptr;
+    node->left = nullptr;
+    node->type = TokenType::Number;
+    node->priority = static_cast<int>(node->type);
+    node->value = to_string(finalValue);
 }
 
 void interpreter(Node* root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
 
-    if(isOperation(root) && haveValues(root)){
-        // Transform Operation Node to a Number Node
-        cout << "operation start" << endl;
-        root = performOperation(root, int_values, float_values, int_names, float_names);
-
-    }else if(root->type == TokenType::Equal && root->leftChild->type == TokenType::Identifier && root->rightChild->type == TokenType::Number){
-        // Assign a value to existent variable
-        cout << "assigment statement start" << endl;
+    if(root->type == TokenType::Show){
+        // cout << "showing var" << endl;
         for(int i = 0; i < int_names.size(); i++){
-            if(int_names[i] == root->leftChild->value){
-                int_values[i] = static_cast<int>((stof(root->rightChild->value)));
+            if(int_names[i] == root->left->value){
+                cout << int_values[i] << endl;
                 return;
             }
         }
         for(int i = 0; i < float_names.size(); i++){
-            if(float_names[i] == root->leftChild->value){
-                float_values[i] = stof(root->rightChild->value);
+            if(float_names[i] == root->left->value){
+                cout << float_values[i] << endl;
                 return;
             }
         }
-        cout << "Initialization Error: Variable was not initiate" << endl;
+        cout << "Initiation Error: Variable " <<  root->left->value << " was not initiated." << endl;
         exit(1);
-
     }else if(root->type == TokenType::Init){
-        cout << "creating new var" << endl;
+        // cout << "creating new var" << endl;
         // Create new variable with a value
-        Node* varNode = root->leftChild->leftChild;
-        Node* numNode = root->leftChild->rightChild;
+        Node* varNode = root->left->left;
+        Node* numNode = root->left->right;
 
         for(int i = 0; i < int_names.size(); i++){
             if(int_names[i] == varNode->value){
@@ -147,28 +134,39 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
             float_names.push_back(varNode->value);
             float_values.push_back(stof(numNode->value));
         }
+        return;
+    }
 
 
-    }else if(root->type == TokenType::Show){
-        cout << "showing var" << endl;
+    if (root->left == nullptr && root->right == nullptr) return;
+    interpreter(root->left, int_values, float_values, int_names, float_names);
+    interpreter(root->right, int_values, float_values, int_names, float_names);
+
+
+
+    
+    if(isOperation(root) && haveValues(root)){
+        // Transform Operation Node to a Number Node
+        // cout << "operation start" << endl;
+        performOperation(root, int_values, float_values, int_names, float_names);
+        return;
+    }else if(root->type == TokenType::Equal && root->left->type == TokenType::Identifier && root->right->type == TokenType::Number){
+        // Assign a value to existent variable
+        // cout << "assigment start" << endl;
         for(int i = 0; i < int_names.size(); i++){
-            if(int_names[i] == root->leftChild->value){
-                cout << int_values[i] << endl;
+            if(int_names[i] == root->left->value){
+                int_values[i] = static_cast<int>((stof(root->right->value)));
+                return;
             }
         }
         for(int i = 0; i < float_names.size(); i++){
-            if(float_names[i] == root->leftChild->value){
-                cout << float_values[i] << endl;
+            if(float_names[i] == root->left->value){
+                float_values[i] = stof(root->right->value);
+                return;
             }
         }
+        cout << "Initialization Error: Variable was not initiate" << endl;
+        exit(1);
 
-    }else if(root->type == TokenType::Number){
-        cout << "return start" << endl;
-        return;
-    }else{
-        cout << "recursive start" << endl;
-        interpreter(root->leftChild, int_values, float_values, int_names, float_names);
-        cout << "the right one is choosed" << endl;
-        interpreter(root->rightChild, int_values, float_values, int_names, float_names);
     }
 }

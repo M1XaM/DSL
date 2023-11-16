@@ -8,7 +8,7 @@
 using namespace std;
 
 void tokenizer(string line, int lineCount, vector<Token>& lineObject);
-Node* makeTree(vector<Token>& lineObject);
+Node* parser(vector<Token>& lineObject);
 void clearTree(Node* root);
 void interpreter(Node* root, 
                 vector<int>& int_values,
@@ -35,16 +35,16 @@ struct Token {
 struct Node {
     TokenType type;
     string value;
-    Node* leftChild;
-    Node* rightChild;
+    Node* left;
+    Node* right;
     int priority;
 };
 
 void travers(Node* root){
     if(root != nullptr){
         cout << root->value << " ";
-        travers(root->leftChild);
-        travers(root->rightChild);
+        travers(root->left);
+        travers(root->right);
         
     }
 }
@@ -84,7 +84,7 @@ int main(){
     
         
         Node* root = new Node();
-        root = makeTree(lineObject);
+        root = parser(lineObject);
         // travers(root);
         // printBinaryTree(root);
         // cout << '\n';
