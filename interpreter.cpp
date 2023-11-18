@@ -4,13 +4,12 @@
 using namespace std;
 
 enum class TokenType{
-    Init = 1, Show = 2,
-    Equal = 3,
-    Plus = 4, Minus = 4,
-    Multiply = 5, Divide = 5,
-    Power = 6,
-    Number = 7, Identifier = 7,
-    OpenParen = 8, CloseParen = 8,
+    If = 5, Init = 6, Show = 7,
+    Equal = 8,
+    Plus = 9, Minus = 9, 
+    Multiply = 10, Divide = 10,
+    Power = 11,
+    Number = 12, Identifier = 12,
 };
 
 struct Token {
@@ -91,7 +90,37 @@ void performOperation(Node* node, vector<int>& int_values, vector<float>& float_
     node->value = to_string(finalValue);
 }
 
-void interpreter(Node* root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
+void interpreter(Node* root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names, vector<int>& condition, int& toPass){
+
+    // for(int i = 0; i < condition.size(); i++){
+    //     cout << condition[i] << " ";
+    // }
+    // cout << endl;
+
+    if(root->value == "endif"){
+        // Implementing "passing" endif statements
+        if(condition.back() == 0 && toPass > 0){
+            toPass -= 1;
+            return;
+        }
+
+        if(condition.size() > 1){
+            condition.pop_back();
+            return;
+        }else{
+            cout << "Syntax Error: To many endif statements" << endl;
+            exit(1);
+        }
+    }
+
+    if(condition.back() == 0 && root->value == "if"){
+        toPass += 1;
+        return;
+    }else if(condition.back() == 0){
+        return;
+    }
+
+    
 
     if(root->type == TokenType::Show){
         // cout << "showing var" << endl;
@@ -135,12 +164,31 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
             float_values.push_back(stof(numNode->value));
         }
         return;
+    }else if(root->type == TokenType::If){
+        float toCompare;
+        for(int i = 0; i < int_names.size(); i++){
+            if(int_names[i] == root->left->left->value){
+                toCompare = int_values[i];
+            }
+        }
+        for(int j = 0; j < float_names.size(); j++){
+            if(float_names[j] == root->left->left->value){
+                toCompare = float_values[j];
+            }
+        }
+
+        if(toCompare == stof(root->left->right->value)){
+            condition.push_back(1);
+        }else{
+            condition.push_back(0);
+        }
+        return;
     }
 
 
     if (root->left == nullptr && root->right == nullptr) return;
-    interpreter(root->left, int_values, float_values, int_names, float_names);
-    interpreter(root->right, int_values, float_values, int_names, float_names);
+    interpreter(root->left, int_values, float_values, int_names, float_names, condition, toPass);
+    interpreter(root->right, int_values, float_values, int_names, float_names, condition, toPass);
 
 
 

@@ -5,13 +5,12 @@
 using namespace std;
 
 enum class TokenType{
-    Init = 1, Show = 2,
-    Equal = 3,
-    Plus = 4, Minus = 4,
-    Multiply = 5, Divide = 5,
-    Power = 6,
-    Number = 7, Identifier = 7,
-    OpenParen = 8, CloseParen = 8,
+    If = 5, Init = 6, Show = 7,
+    Equal = 8,
+    Plus = 9, Minus = 9,
+    Multiply = 10, Divide = 10,
+    Power = 11,
+    Number = 12, Identifier = 12,
 };
 
 struct Token {
@@ -124,8 +123,9 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
     regex InitializationLine("[\\s]*(int|float)\\s+([a-zA-Z]+)[\\s]*=[\\s]*([0-9]+(.[0-9]+)?)[\\s]*"); // modified
     regex AssigmentLine("\\s*([a-zA-Z]\\w*)\\s*=\\s*(.*)\\s*");
 
-    // regex ConditionalLine("[\\s]*if\\s+([a-zA-Z_]\\w*|\\d+(\\.\\d+)?|\\.\\d+)\\s+(>|<|==|!=|>=|<=)\\s+([a-zA-Z_]\\w*|\\d+(\\.\\d+)?|\\.\\d+)\\s+then[\\s]*");
-    // regex LoopLine("[\\s]*for\\s+([a-zA-Z]\\w*)\\s+to\\s+([a-zA-Z_]\\w*|\\d+)\\s+repeat[\\s]*");
+    regex ConditionalLine("[\\s]*if\\s+([a-zA-Z_]*)[\\s]*=[\\s]*([0-9]+(.[0-9]+)?)\\s+then[\\s]*");
+    regex ConditionalLineEnd("[\\s]*endif[\\s]*");
+;    // regex LoopLine("[\\s]*for\\s+([a-zA-Z]\\w*)\\s+to\\s+([a-zA-Z_]\\w*|\\d+)\\s+repeat[\\s]*");
 
     
     smatch parsingArray;
@@ -154,8 +154,19 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
             tokenizeExpression(expression, lineObject);
 
         }
+    }else if(regex_match(line, ConditionalLine)){
+        if(regex_search(line, parsingArray, ConditionalLine)){
+            lineObject.push_back(makeToken(TokenType::If, "if"));
+            lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[1]));
+            lineObject.push_back(makeToken(TokenType::Equal, "="));
+            lineObject.push_back(makeToken(TokenType::Number, parsingArray[2]));
+        }
+    }else if(regex_match(line, ConditionalLineEnd)){
+        if(regex_search(line, parsingArray, ConditionalLineEnd)){
+            lineObject.push_back(makeToken(TokenType::If, "endif"));
+        }
+
     // }else if(regex_match(line, LoopLine)){
-    // }else if(regex_match(line, ConditionalLine)){
     }else{
         cout << "Syntax Error (on line number " << lineCount << ")" << endl;
         exit(1);

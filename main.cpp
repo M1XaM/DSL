@@ -14,17 +14,18 @@ void interpreter(Node* root,
                 vector<int>& int_values,
                 vector<float>& float_values,
                 vector<string>& int_names,
-                vector<string>& float_names);
+                vector<string>& float_names,
+                vector<int>& condition,
+                int& toPass);
 
 
 enum class TokenType{
-    Init = 1, Show = 2,
-    Equal = 3,
-    Plus = 4, Minus = 4,
-    Multiply = 5, Divide = 5,
-    Power = 6,
-    Number = 7, Identifier = 7,
-    OpenParen = 8, CloseParen = 8,
+    If = 5, Init = 6, Show = 7,
+    Equal = 8,
+    Plus = 9, Minus = 9,
+    Multiply = 10, Divide = 10,
+    Power = 11,
+    Number = 12, Identifier = 12,
 };
 
 struct Token {
@@ -55,7 +56,7 @@ int main(){
     // cout << "Enter the name of exisiting file: ";
     // cin >> filename;
     // ifstream inputFile(filename);
-    ifstream inputFile("file.faf"); 
+    ifstream inputFile("input2.faf"); 
     if (!inputFile.is_open()){
         cout << "Error opening the file." << endl;
         return 1;
@@ -66,6 +67,9 @@ int main(){
     static vector<float> float_values;
     static vector<string> int_names;
     static vector<string> float_names;
+    static vector<int> condition = {1};
+    static int toPass = 0;  // how many endif statements should be passed
+    // This can happen when an if statement is under no execution state, so his endif statement should not affect condition vector
 
     string line;
     int lineCount = 0;
@@ -89,7 +93,7 @@ int main(){
         // printBinaryTree(root);
         // cout << '\n';
 
-        interpreter(root, int_values, float_values, int_names, float_names);
+        interpreter(root, int_values, float_values, int_names, float_names, condition, toPass);
         clearTree(root);
     }
     inputFile.close();

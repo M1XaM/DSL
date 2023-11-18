@@ -13,7 +13,10 @@ Existing instructions:
 <varname> = <math expression>
 show <varname>
 
-(math expression are made from operators +, -, /, * and variables/integers/float numbers)
+if <varname> = <number> then
+endif
 
+(math expression are made from operators +, -, /, * and variables/integers/float numbers)
+(if statements can be included one in another)
 
 

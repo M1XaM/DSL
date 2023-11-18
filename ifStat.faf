@@ -1,0 +1,13 @@
+int a = 6
+
+if a = 6 then
+    a = 4
+
+    if a = 4 then
+        float b = 5.4
+        # a = b  this still has an error
+    endif
+endif
+
+show a
+show b
