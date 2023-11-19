@@ -124,26 +124,36 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
 
     if(root->type == TokenType::Show){
         // cout << "showing var" << endl;
-        for(int i = 0; i < int_names.size(); i++){
-            if(int_names[i] == root->left->value){
-                cout << int_values[i] << endl;
-                return;
+        if(isOperation(root->left)){
+            interpreter(root->left, int_values, float_values, int_names, float_names, condition, toPass);
+            cout << root->left->value << endl;
+            return;
+        }else if(isalpha((root->left->value)[0])){
+            for(int i = 0; i < int_names.size(); i++){
+                if(int_names[i] == root->left->value){
+                    cout << int_values[i] << endl;
+                    return;
+                }
             }
-        }
-        for(int i = 0; i < float_names.size(); i++){
-            if(float_names[i] == root->left->value){
-                cout << float_values[i] << endl;
-                return;
+            for(int i = 0; i < float_names.size(); i++){
+                if(float_names[i] == root->left->value){
+                    cout << float_values[i] << endl;
+                    return;
+                }
             }
+            cout << "Initialization Error: Variable " <<  root->left->value << " was not initiated." << endl;
+            exit(1);
+        }else{
+            cout << root->left->value << endl;
+            return;
         }
-        cout << "Initiation Error: Variable " <<  root->left->value << " was not initiated." << endl;
-        exit(1);
-        
-    }else if(root->type == TokenType::Init){
+
+
+    }else if(root->type == TokenType::Init){  // Create new variable with a value
         // cout << "creating new var" << endl;
-        // Create new variable with a value
         Node* varNode = root->left->left;
-        Node* numNode = root->left->right;
+        interpreter(root->left->right, int_values, float_values, int_names, float_names, condition, toPass);
+        Node* numNode =  root->left->right;
 
         for(int i = 0; i < int_names.size(); i++){
             if(int_names[i] == varNode->value){
@@ -165,24 +175,47 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
             float_values.push_back(stof(numNode->value));
         }
         return;
+
     }else if(root->type == TokenType::If){
-        float toCompare;
+        float firstPart, secondPart;
+        // Second Part
+        if(isOperation(root->left->right)){  
+            interpreter(root->left->right, int_values, float_values, int_names, float_names, condition, toPass);
+            secondPart = stof(root->left->right->value);
+        }else if(isalpha((root->left->right->value)[0])){
+            for(int i = 0; i < int_names.size(); i++){
+                if(int_names[i] == root->left->right->value){
+                    secondPart = int_values[i];
+                }
+            }
+            for(int j = 0; j < float_names.size(); j++){
+                if(float_names[j] == root->left->right->value){
+                    secondPart = float_values[j];
+                }
+            }
+        }else{
+            secondPart = stof(root->left->right->value);
+        }
+
+        // First Part
         for(int i = 0; i < int_names.size(); i++){
             if(int_names[i] == root->left->left->value){
-                toCompare = int_values[i];
+                firstPart = int_values[i];
             }
         }
         for(int j = 0; j < float_names.size(); j++){
             if(float_names[j] == root->left->left->value){
-                toCompare = float_values[j];
+                firstPart = float_values[j];
             }
         }
 
-        if(toCompare == stof(root->left->right->value)){
+        
+        if(firstPart == secondPart){
             condition.push_back(1);
         }else{
             condition.push_back(0);
         }
+        // cout << "pass" << endl;
         return;
     }
 
@@ -202,7 +235,6 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
     }else if(root->type == TokenType::Equal && root->left->type == TokenType::Identifier && root->right->type == TokenType::Number){
         // Assign a value to existent variable
         // cout << "assigment start" << endl;
-
         float toAssignValue;
         if(isalpha((root->right->value)[0])){
             for(int i = 0; i < int_names.size(); i++){
@@ -231,7 +263,7 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
                 return;
             }
         }
-        cout << "Initialization Error: Variable was not initiate" << endl;
+        cout << "Initialization Error: Variable was not initiated" << endl;
         exit(1);
 
     }

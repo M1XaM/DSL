@@ -1,21 +1,37 @@
-General specifications:
 Input: File
 Output: Terminal
 Variables naming: only letters
 Each statement must begin with new line
 Math expressions are made from operators +, -, /, * and variables, integers, float numbers
-Each element from a math expression must be separated by a space
+Each element from the math expression must be separated by a space
 Comments start with # and free lines are acceptable
+Equal sign have two roles: assign values for new or existing variables; check equality of two values in if statements
 
 
 Existing instructions:
-<int/float> <varname> = <number>
+<int/float> <varname> = <math expression>
 <varname> = <math expression>
-show <varname>
+show <math expression>
 
-if <varname> = <number> then
+if <varname> = <math expression> then
     ...
 endif
+
+
+Possible errors:
+Syntax Error: There is an if statement that is not 'closed' (unpredictable behavior may occur)"
+Syntax Error: To many endif statements
+Syntax Error: (on line number ...)
+Division Error: You cannot divide by zero
+Initialization Error: Cannot initiate one variable two times
+Initialization Error: Variable was not initiated
+
+Some errors and/or unpredictable behavior can be triggered if:
+Math operator do not have 2 values to work with
+Each element from the math expression is not separated by a space
+
+
+
 
 
 

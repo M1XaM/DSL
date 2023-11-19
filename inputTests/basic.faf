@@ -1,4 +1,4 @@
-# Basic example
+# Initialization
 int a = 25
 float b = 2.5
 
@@ -8,7 +8,8 @@ show a
 b = 14 / 7 * 3 + 1 * 4 + 5
 show b
 
+show 10 / 3 * 2 + 4
+
 # Implicit conversion
 int pi = 3.1428
 show pi
-

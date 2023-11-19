@@ -87,14 +87,18 @@ Node* mathExpression(vector<Token>& lineObject){
 Node* parser(vector<Token>& lineObject){
     Node* root = createNode(lineObject[0]);
     if(root->type == TokenType::Show){
-        root->left = createNode(lineObject[1]);
+        lineObject.erase(lineObject.begin());
+        root->left = mathExpression(lineObject);
     }else if(root->type == TokenType::Init){
         lineObject.erase(lineObject.begin());
         root->left = mathExpression(lineObject);
     }else if(root->type == TokenType::If && root->value == "if"){
-        root->left = createNode(lineObject[2]);
-        root->left->left = createNode(lineObject[1]);
-        root->left->right = createNode(lineObject[3]);
+        root->left = createNode(lineObject[2]); // if already exists, this is equal
+        root->left->left = createNode(lineObject[1]); // this is varname
+        lineObject.erase(lineObject.begin()); // erasing if
+        lineObject.erase(lineObject.begin()); // erasing varname
+        lineObject.erase(lineObject.begin()); // erasing equal
+        root->left->right = mathExpression(lineObject); // evaluating the expression after the equal sign
     }else if(root->type == TokenType::If && root->value == "endif"){
         // If it's endif statement - the root is already formed
     }else{

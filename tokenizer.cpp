@@ -118,12 +118,12 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
 
     regex EmptyLine("[\\s]*");
     regex CommentLine("[\\s]*#.*[\\s]*");
-    regex ShowLine("[\\s]*show\\s+([a-zA-Z]\\w*)[\\s]*");
 
-    regex InitializationLine("[\\s]*(int|float)\\s+([a-zA-Z]+)[\\s]*=[\\s]*([0-9]+(.[0-9]+)?)[\\s]*"); // modified
+    regex ShowLine("[\\s]*show\\s+(.*)[\\s]*");
+    regex InitializationLine("[\\s]*(int|float)\\s+([a-zA-Z]+)[\\s]*=[\\s]*(.*)[\\s]*"); // modified
     regex AssigmentLine("\\s*([a-zA-Z]\\w*)\\s*=\\s*(.*)\\s*");
 
-    regex ConditionalLine("[\\s]*if\\s+([a-zA-Z_]*)[\\s]*=[\\s]*([0-9]+(.[0-9]+)?)\\s+then[\\s]*");
+    regex ConditionalLine("[\\s]*if\\s+([a-zA-Z_]*)[\\s]*=[\\s]*(.*)\\s+then[\\s]*");
     regex ConditionalLineEnd("[\\s]*endif[\\s]*");
 ;    // regex LoopLine("[\\s]*for\\s+([a-zA-Z]\\w*)\\s+to\\s+([a-zA-Z_]\\w*|\\d+)\\s+repeat[\\s]*");
 
@@ -136,13 +136,19 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
             lineObject.push_back(makeToken(TokenType::Init, parsingArray[1]));
             lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[2]));
             lineObject.push_back(makeToken(TokenType::Equal, "="));
-            lineObject.push_back(makeToken(TokenType::Number, parsingArray[3]));
+            // lineObject.push_back(makeToken(TokenType::Number, parsingArray[3]));
+
+            string expression = parsingArray[3].str();
+            tokenizeExpression(expression, lineObject);
         }
 
     }else if(regex_match(line, ShowLine)){
         if(regex_search(line, parsingArray, ShowLine)){
             lineObject.push_back(makeToken(TokenType::Show, "show"));
-            lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[1]));
+            // lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[1]));
+
+            string expression = parsingArray[1].str();
+            tokenizeExpression(expression, lineObject);            
         }
 
     }else if(regex_match(line, AssigmentLine)){
@@ -159,7 +165,11 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
             lineObject.push_back(makeToken(TokenType::If, "if"));
             lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[1]));
             lineObject.push_back(makeToken(TokenType::Equal, "="));
-            lineObject.push_back(makeToken(TokenType::Number, parsingArray[2]));
+            // lineObject.push_back(makeToken(TokenType::Number, parsingArray[2]));
+            
+            string expression = parsingArray[2].str();
+            tokenizeExpression(expression, lineObject);
+
         }
     }else if(regex_match(line, ConditionalLineEnd)){
         if(regex_search(line, parsingArray, ConditionalLineEnd)){

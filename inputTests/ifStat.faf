@@ -1,9 +1,9 @@
 int a = 6
 
-if a = 6 then
+if a = 5 + 1 then
     a = 4
 
-    if a = 4 then
+    if a = 8 / 2 then
         float b = 5.4
         a = b  
     endif
