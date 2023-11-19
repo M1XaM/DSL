@@ -5,8 +5,9 @@ if a = 6 then
 
     if a = 4 then
         float b = 5.4
-        # a = b  this still has an error
+        a = b  
     endif
+    
 endif
 
 show a

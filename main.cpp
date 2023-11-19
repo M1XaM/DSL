@@ -56,7 +56,7 @@ int main(){
     // cout << "Enter the name of exisiting file: ";
     // cin >> filename;
     // ifstream inputFile(filename);
-    ifstream inputFile("input2.faf"); 
+    ifstream inputFile("inputTests/test.faf"); 
     if (!inputFile.is_open()){
         cout << "Error opening the file." << endl;
         return 1;
@@ -97,6 +97,13 @@ int main(){
         clearTree(root);
     }
     inputFile.close();
+
+    if(condition.size() > 1){
+        cout << "Syntax Error: There is an if statement that is not 'closed' (unpredictable behavior may occur)" << endl;
+        exit(1);
+    }
+
+
     return 0;
 }
 

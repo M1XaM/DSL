@@ -138,6 +138,7 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
         }
         cout << "Initiation Error: Variable " <<  root->left->value << " was not initiated." << endl;
         exit(1);
+        
     }else if(root->type == TokenType::Init){
         // cout << "creating new var" << endl;
         // Create new variable with a value
@@ -201,15 +202,32 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
     }else if(root->type == TokenType::Equal && root->left->type == TokenType::Identifier && root->right->type == TokenType::Number){
         // Assign a value to existent variable
         // cout << "assigment start" << endl;
+
+        float toAssignValue;
+        if(isalpha((root->right->value)[0])){
+            for(int i = 0; i < int_names.size(); i++){
+                if(int_names[i] == root->right->value){
+                    toAssignValue = int_values[i];
+                }
+            }
+            for(int j = 0; j < float_names.size(); j++){
+                if(float_names[j] == root->right->value){
+                    toAssignValue = float_values[j];
+                }
+            }
+        }else{
+            toAssignValue = stof(root->right->value);
+        }
+
         for(int i = 0; i < int_names.size(); i++){
             if(int_names[i] == root->left->value){
-                int_values[i] = static_cast<int>((stof(root->right->value)));
+                int_values[i] = static_cast<int>(toAssignValue);
                 return;
             }
         }
         for(int i = 0; i < float_names.size(); i++){
             if(float_names[i] == root->left->value){
-                float_values[i] = stof(root->right->value);
+                float_values[i] = toAssignValue;
                 return;
             }
         }

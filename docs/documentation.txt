@@ -3,9 +3,9 @@ Input: File
 Output: Terminal
 Variables naming: only letters
 Each statement must begin with new line
+Math expressions are made from operators +, -, /, * and variables, integers, float numbers
 Each element from a math expression must be separated by a space
 Comments start with # and free lines are acceptable
-
 
 
 Existing instructions:
@@ -14,9 +14,8 @@ Existing instructions:
 show <varname>
 
 if <varname> = <number> then
+    ...
 endif
 
-(math expression are made from operators +, -, /, * and variables/integers/float numbers)
-(if statements can be included one in another)
 
 
