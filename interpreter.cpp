@@ -4,8 +4,7 @@
 using namespace std;
 
 enum class TokenType{
-    If = 5, Init = 6, Show = 7,
-    Equal = 8,
+    Rep = 4, If = 5, Init = 6, Show = 7,    Equal = 8,
     Plus = 9, Minus = 9, 
     Multiply = 10, Divide = 10,
     Power = 11,

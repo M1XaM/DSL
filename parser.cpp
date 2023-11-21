@@ -4,8 +4,7 @@
 using namespace std;
 
 enum class TokenType{
-    If = 5, Init = 6, Show = 7,
-    Equal = 8,
+    Rep = 4, If = 5, Init = 6, Show = 7,    Equal = 8,
     Plus = 9, Minus = 9,
     Multiply = 10, Divide = 10,
     Power = 11,
@@ -101,6 +100,11 @@ Node* parser(vector<Token>& lineObject){
         root->left->right = mathExpression(lineObject); // evaluating the expression after the equal sign
     }else if(root->type == TokenType::If && root->value == "endif"){
         // If it's endif statement - the root is already formed
+    }else if(root->type == TokenType::Rep && root->value == "repeat"){
+        lineObject.erase(lineObject.begin());
+        root->left = mathExpression(lineObject);
+    }else if(root->type == TokenType::Rep && root->value == "endrepeat"){
+        // If it's endrepeat statement - the root is already formed
     }else{
         root = mathExpression(lineObject);
         // cout << root->value << " " << int(root->type) << endl;

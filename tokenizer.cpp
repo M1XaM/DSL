@@ -5,7 +5,7 @@
 using namespace std;
 
 enum class TokenType{
-    If = 5, Init = 6, Show = 7,
+    Rep = 4, If = 5, Init = 6, Show = 7,
     Equal = 8,
     Plus = 9, Minus = 9,
     Multiply = 10, Divide = 10,
@@ -121,11 +121,13 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
 
     regex ShowLine("[\\s]*show\\s+(.*)[\\s]*");
     regex InitializationLine("[\\s]*(int|float)\\s+([a-zA-Z]+)[\\s]*=[\\s]*(.*)[\\s]*"); // modified
-    regex AssigmentLine("\\s*([a-zA-Z]\\w*)\\s*=\\s*(.*)\\s*");
+    regex AssigmentLine("[\\s]*([a-zA-Z]\\w*)\\s*=\\s*(.*)\\s*");
 
     regex ConditionalLine("[\\s]*if\\s+([a-zA-Z_]*)[\\s]*=[\\s]*(.*)\\s+then[\\s]*");
     regex ConditionalLineEnd("[\\s]*endif[\\s]*");
-;    // regex LoopLine("[\\s]*for\\s+([a-zA-Z]\\w*)\\s+to\\s+([a-zA-Z_]\\w*|\\d+)\\s+repeat[\\s]*");
+
+    regex LoopLine("[\\s]*repeat\\s+(.*)\\s+times");
+    regex LoopLineEnd("[\\s]*endrepeat[\\s]*");
 
     
     smatch parsingArray;
@@ -136,7 +138,6 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
             lineObject.push_back(makeToken(TokenType::Init, parsingArray[1]));
             lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[2]));
             lineObject.push_back(makeToken(TokenType::Equal, "="));
-            // lineObject.push_back(makeToken(TokenType::Number, parsingArray[3]));
 
             string expression = parsingArray[3].str();
             tokenizeExpression(expression, lineObject);
@@ -145,7 +146,6 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
     }else if(regex_match(line, ShowLine)){
         if(regex_search(line, parsingArray, ShowLine)){
             lineObject.push_back(makeToken(TokenType::Show, "show"));
-            // lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[1]));
 
             string expression = parsingArray[1].str();
             tokenizeExpression(expression, lineObject);            
@@ -165,7 +165,6 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
             lineObject.push_back(makeToken(TokenType::If, "if"));
             lineObject.push_back(makeToken(TokenType::Identifier, parsingArray[1]));
             lineObject.push_back(makeToken(TokenType::Equal, "="));
-            // lineObject.push_back(makeToken(TokenType::Number, parsingArray[2]));
             
             string expression = parsingArray[2].str();
             tokenizeExpression(expression, lineObject);
@@ -176,7 +175,17 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
             lineObject.push_back(makeToken(TokenType::If, "endif"));
         }
 
-    // }else if(regex_match(line, LoopLine)){
+    }else if(regex_match(line, LoopLine)){
+        if(regex_search(line, parsingArray, LoopLine)){
+            lineObject.push_back(makeToken(TokenType::Rep, "repeat"));
+            
+            string expression = parsingArray[1].str();
+            tokenizeExpression(expression, lineObject);
+        }
+    }else if(regex_match(line, LoopLineEnd)){
+        if(regex_search(line, parsingArray, LoopLineEnd)){
+            lineObject.push_back(makeToken(TokenType::Rep, "endrepeat"));
+        }
     }else{
         cout << "Syntax Error (on line number " << lineCount << ")" << endl;
         exit(1);

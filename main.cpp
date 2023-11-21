@@ -20,8 +20,7 @@ void interpreter(Node* root,
 
 
 enum class TokenType{
-    If = 5, Init = 6, Show = 7,
-    Equal = 8,
+    Rep = 4, If = 5, Init = 6, Show = 7,    Equal = 8,
     Plus = 9, Minus = 9,
     Multiply = 10, Divide = 10,
     Power = 11,
@@ -56,7 +55,7 @@ int main(){
     // cout << "Enter the name of exisiting file: ";
     // cin >> filename;
     // ifstream inputFile(filename);
-    ifstream inputFile("inputTests/basic.faf"); 
+    ifstream inputFile("inputTests/test.faf"); 
     if (!inputFile.is_open()){
         cout << "Error opening the file." << endl;
         return 1;
@@ -69,6 +68,8 @@ int main(){
     static vector<string> float_names;
     static vector<int> condition = {1};
     static int toPass = 0;  // how many endif statements should be passed
+    static vector<Node> LoopList;
+    
     // This can happen when an if statement is under no execution state, so his endif statement should not affect condition vector
 
     string line;
@@ -94,7 +95,7 @@ int main(){
         // cout << '\n';
 
         interpreter(root, int_values, float_values, int_names, float_names, condition, toPass);
-        clearTree(root);
+        // clearTree(root);
     }
     inputFile.close();
 

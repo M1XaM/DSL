@@ -1,8 +1,7 @@
 int a = 5
 
-if a = 4 + 1 then
-    a = 3
-endif
-
+repeat 4 times
+a = a + 1
+endrepeat
 
 show a
