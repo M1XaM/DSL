@@ -1,28 +1,11 @@
+#ifndef INTERPRETER_H
+#define INTERPRETER_H
+
 #include<iostream>
 #include<vector>
 #include<string>
+#include"structs.h"
 using namespace std;
-
-enum class TokenType{
-    Rep = 4, If = 5, Init = 6, Show = 7,    Equal = 8,
-    Plus = 9, Minus = 9, 
-    Multiply = 10, Divide = 10,
-    Power = 11,
-    Number = 12, Identifier = 12,
-};
-
-struct Token {
-    TokenType type;
-    string value;
-};
-
-struct Node {
-    TokenType type;
-    string value;
-    Node* left;
-    Node* right;
-    int priority;
-};
 
 bool isOperation(Node* node) {
     return (node->value == "+" || node->value == "-" || node->value == "*" || node->value == "/");
@@ -267,3 +250,5 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
 
     }
 }
+
+#endif

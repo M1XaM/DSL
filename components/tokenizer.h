@@ -1,22 +1,12 @@
+#ifndef TOKENIZER_H
+#define TOKENIZER_H
+
 #include<iostream>
 #include<string>
 #include<vector>
 #include<regex>
+#include"structs.h"
 using namespace std;
-
-enum class TokenType{
-    Rep = 4, If = 5, Init = 6, Show = 7,
-    Equal = 8,
-    Plus = 9, Minus = 9,
-    Multiply = 10, Divide = 10,
-    Power = 11,
-    Number = 12, Identifier = 12,
-};
-
-struct Token {
-    TokenType type;
-    string value;
-};
 
 TokenType whichTokenType(string sign){
     TokenType result;
@@ -192,3 +182,5 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject){
     }
 }
 
+
+#endif 

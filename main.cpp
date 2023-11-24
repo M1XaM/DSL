@@ -2,9 +2,11 @@
 #include<string>
 #include<fstream>
 #include<vector>
-#include"tokenizer.h"
-#include"parser.h"
-#include"interpreter.h"
+
+#include"components/tokenizer.h"
+#include"components/parser.h"
+#include"components/interpreter.h"
+#include"components/structs.h"
 using namespace std;
 
 void tokenizer(string line, int lineCount, vector<Token>& lineObject);
@@ -19,26 +21,7 @@ void interpreter(Node* root,
                 int& toPass);
 
 
-enum class TokenType{
-    Rep = 4, If = 5, Init = 6, Show = 7,    Equal = 8,
-    Plus = 9, Minus = 9,
-    Multiply = 10, Divide = 10,
-    Power = 11,
-    Number = 12, Identifier = 12,
-};
 
-struct Token {
-    TokenType type;
-    string value;
-};
-
-struct Node {
-    TokenType type;
-    string value;
-    Node* left;
-    Node* right;
-    int priority;
-};
 
 void travers(Node* root){
     if(root != nullptr){
@@ -55,7 +38,7 @@ int main(){
     // cout << "Enter the name of exisiting file: ";
     // cin >> filename;
     // ifstream inputFile(filename);
-    ifstream inputFile("inputTests/test.faf"); 
+    ifstream inputFile("inputTests/ifStat.faf"); 
     if (!inputFile.is_open()){
         cout << "Error opening the file." << endl;
         return 1;

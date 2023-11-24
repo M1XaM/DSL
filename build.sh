@@ -1,3 +1,3 @@
 #!/bin/bash
-g++ -o test main.cpp tokenizer.cpp parser.cpp interpreter.cpp
+g++ -o test main.cpp
 ./test
