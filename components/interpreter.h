@@ -6,6 +6,11 @@
 #include<string>
 #include"structs.h"
 using namespace std;
+
+static vector<int> int_values;
+static vector<float> float_values;
+static vector<string> int_names;
+static vector<string> float_names;
 static vector<LoopNode*> LoopList;
 static int activeLoop = -1;
 
@@ -19,7 +24,7 @@ bool haveValues(Node* node){
 }
 
 
-void performOperation(Node* node, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
+void performOperation(Node* node){
     float leftValue, rightValue, finalValue;
 
 
@@ -74,15 +79,14 @@ void performOperation(Node* node, vector<int>& int_values, vector<float>& float_
     node->value = to_string(finalValue);
 }
 
-void recursiveMathExpression(Node* root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names){
+void recursiveMathExpression(Node* root){
     if (root->left == nullptr && root->right == nullptr) return;
-    recursiveMathExpression(root->left, int_values, float_values, int_names, float_names);
-    recursiveMathExpression(root->right, int_values, float_values, int_names, float_names);
+    recursiveMathExpression(root->left);
+    recursiveMathExpression(root->right);
 
     if(isOperation(root) && haveValues(root)){
         // Transform Operation Node to a Number Node
-        // cout << "operation start" << endl;
-        performOperation(root, int_values, float_values, int_names, float_names);
+        performOperation(root);
         return;
     }
 }
@@ -95,21 +99,41 @@ LoopNode* makeLoopNode(Node* root){
     return loopNode;
 }
 
-void interpreter(Node* root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names, vector<int>& condition, int& toPass);
+Node* copyTree(const Node* originalNode) {
+    if (originalNode == nullptr) {
+        return nullptr;
+    }
 
-void iterateLoopNode(LoopNode* loopNode, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names, vector<int>& condition, int& toPass){
+    // Create a new node with the same data
+    Node* newNode = new Node;
+    newNode->type = originalNode->type;
+    newNode->value = originalNode->value;
+
+    // Recursively copy the left and right subtrees
+    newNode->left = copyTree(originalNode->left);
+    newNode->right = copyTree(originalNode->right);
+    return newNode;
+}
+
+void interpreter(Node* root,   vector<int>& condition, int& toPass);
+void iterateLoopNode(LoopNode* loopNode,  vector<int>& condition, int& toPass){
+    
     for(int i = 0; i < loopNode->initial_n; i++){
-        for(int i = 0; i < loopNode->roots.size(); i++){
-            if(loopNode->roots.at(i)->isItLoop == 0){
-                interpreter(loopNode->actualRoot, int_values, float_values, int_names, float_names, condition, toPass);
+        for(int j = 0; j < loopNode->roots.size(); j++){
+            
+            if(loopNode->roots.at(j)->isItLoop == 0){
+                loopNode->roots.at(j)->actualRoot = loopNode->roots.at(j)->actualRoot->initialState;
+                interpreter(loopNode->roots.at(j)->actualRoot, condition, toPass);
             }else{
-                iterateLoopNode(loopNode->roots.at(i), int_values, float_values, int_names, float_names, condition, toPass);
+                iterateLoopNode(loopNode->roots.at(j),  condition, toPass);
             }
         }
     }
 }
 
-void interpreter(Node* root, vector<int>& int_values, vector<float>& float_values, vector<string>& int_names, vector<string>& float_names, vector<int>& condition, int& toPass){
+void interpreter(Node* root, vector<int>& condition, int& toPass){
+    root->initialState = copyTree(root);
+
     // Implementing "passing" endif statements (this block of code must be in the beggining)
     if(root->value == "endif"){
         if(condition.back() == 0 && toPass > 0){
@@ -131,9 +155,7 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
         return;
     }
     
-
-
-    // Make loop node
+    
     if(root->value == "repeat"){
         if(LoopList.size() == 0){ // first loop is the most basic
             LoopNode* loopStat = makeLoopNode(root);
@@ -150,39 +172,26 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
         activeLoop -= 1;
         if(activeLoop == -1 && LoopList.size() > 0){  // check if we start iterating
             int iterations  = LoopList.at(0)->initial_n;
-            // Recursion starts directly from first LoopNode
-            iterateLoopNode(LoopList.at(0), int_values, float_values, int_names, float_names, condition, toPass);
+            iterateLoopNode(LoopList.at(0), condition, toPass);
             LoopList.clear();
         }
         return;
     }
-
     // Add statements in active loop
     // LoopNode have roots that are just another LoopNode, so we have to make our root into LoopNode but to interpret it like a simple root
     if(activeLoop > -1){
         LoopNode* notLoop = new LoopNode;
         notLoop->isItLoop = 0;
         notLoop->actualRoot = root;
-        // LoopList.at(activeLoop)->roots.push_back(notLoop);
+        LoopList.at(activeLoop)->roots.push_back(notLoop);
         return;
     }
-    
-
-    
-
-
-    
-
-
-
-
     
 
     if(root->type == TokenType::Show){
         // cout << "showing var" << endl;
         if(isOperation(root->left)){
-            recursiveMathExpression(root->left, int_values, float_values, int_names, float_names);
-            cout << root->left->value << endl;
+            recursiveMathExpression(root->left);
             return;
         }else if(isalpha((root->left->value)[0])){
             for(int i = 0; i < int_names.size(); i++){
@@ -204,11 +213,10 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
             return;
         }
 
-
-    }else if(root->type == TokenType::Init){  // Create new variable with a value
+    }else if(root->type == TokenType::Init){
         // cout << "creating new var" << endl;
         Node* varNode = root->left->left;
-        recursiveMathExpression(root->left->right, int_values, float_values, int_names, float_names);
+        recursiveMathExpression(root->left->right);
         Node* numNode =  root->left->right;
 
         for(int i = 0; i < int_names.size(); i++){
@@ -232,11 +240,11 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
         }
         return;
 
-    }else if(root->type == TokenType::If){  // Evaluating if-statement
+    }else if(root->type == TokenType::If){
         float firstPart, secondPart;
         // Second Part of if-statement (after the equal)
         if(isOperation(root->left->right)){  
-            recursiveMathExpression(root->left->right, int_values, float_values, int_names, float_names);
+            recursiveMathExpression(root->left->right);
             secondPart = stof(root->left->right->value);
         }else if(isalpha((root->left->right->value)[0])){
             for(int i = 0; i < int_names.size(); i++){
@@ -252,7 +260,6 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
         }else{
             secondPart = stof(root->left->right->value);
         }
-
         // First Part of if-statement (before the equal)
         for(int i = 0; i < int_names.size(); i++){
             if(int_names[i] == root->left->left->value){
@@ -264,20 +271,16 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
                 firstPart = float_values[j];
             }
         }
-        
         // Evaluating the truthness of expression
         if(firstPart == secondPart){
             condition.push_back(1);
         }else{
             condition.push_back(0);
         }
-        // cout << "pass" << endl;
         return;
 
-    // Assign a value to existent variable
     }else if(root->type == TokenType::Equal && root->left->type == TokenType::Identifier ){ // && root->right->type == TokenType::Number
         // cout << "assigment start" << endl;
-        recursiveMathExpression(root->right, int_values, float_values, int_names, float_names);
         float toAssignValue;
         if(isalpha((root->right->value)[0])){
             for(int i = 0; i < int_names.size(); i++){
@@ -290,6 +293,9 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
                     toAssignValue = float_values[j];
                 }
             }
+        }else if(isOperation(root->right)){
+            recursiveMathExpression(root->right);
+            toAssignValue = stof(root->right->value);
         }else{
             toAssignValue = stof(root->right->value);
         }
@@ -308,7 +314,6 @@ void interpreter(Node* root, vector<int>& int_values, vector<float>& float_value
         }
         cout << "Initialization Error: Variable was not initiated" << endl;
         exit(1);
-
     }
 }
 

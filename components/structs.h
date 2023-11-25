@@ -24,6 +24,8 @@ struct Node{
     Node* left;
     Node* right;
     int priority;
+
+    Node* initialState; // address to same root node like itself, to have an initialy copy
 };
 
 struct LoopNode{

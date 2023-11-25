@@ -13,10 +13,7 @@ void tokenizer(string line, int lineCount, vector<Token>& lineObject);
 Node* parser(vector<Token>& lineObject);
 void clearTree(Node* root);
 void interpreter(Node* root, 
-                vector<int>& int_values,
-                vector<float>& float_values,
-                vector<string>& int_names,
-                vector<string>& float_names,
+                
                 vector<int>& condition,
                 int& toPass);
 
@@ -44,21 +41,11 @@ int main(){
         return 1;
     }
 
-    // For interpreter
-    static vector<int> int_values;
-    static vector<float> float_values;
-    static vector<string> int_names;
-    static vector<string> float_names;
+    
 
     static vector<int> condition = {1};
     static int toPass = 0;  // how many endif statements should be passed
     // This can happen when an if statement is under no execution state, so his endif statement should not affect condition vector
-
-    // static vector<LoopNode*> LoopList; // used for storage all loops (resets after most outter loop is ended)
-    // int activeLoop = -1; // used for indicate in which loop will be added the statements that will be repeated
-    // also will represent the index itself, so it start at -1, means there is no loops in the beggining
-    
-    
 
     string line;
     int lineCount = 0;
@@ -82,7 +69,7 @@ int main(){
         // printBinaryTree(root);
         // cout << '\n';
 
-        interpreter(root, int_values, float_values, int_names, float_names, condition, toPass);
+        interpreter(root, condition, toPass);
         // clearTree(root);
         // the tree will be deleted in interpreter (in future), because of loop conditions
 
