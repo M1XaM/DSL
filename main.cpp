@@ -38,7 +38,7 @@ int main(){
     // cout << "Enter the name of exisiting file: ";
     // cin >> filename;
     // ifstream inputFile(filename);
-    ifstream inputFile("inputTests/ifStat.faf"); 
+    ifstream inputFile("inputTests/loop.faf"); 
     if (!inputFile.is_open()){
         cout << "Error opening the file." << endl;
         return 1;
@@ -49,11 +49,16 @@ int main(){
     static vector<float> float_values;
     static vector<string> int_names;
     static vector<string> float_names;
+
     static vector<int> condition = {1};
     static int toPass = 0;  // how many endif statements should be passed
-    static vector<Node> LoopList;
-    
     // This can happen when an if statement is under no execution state, so his endif statement should not affect condition vector
+
+    // static vector<LoopNode*> LoopList; // used for storage all loops (resets after most outter loop is ended)
+    // int activeLoop = -1; // used for indicate in which loop will be added the statements that will be repeated
+    // also will represent the index itself, so it start at -1, means there is no loops in the beggining
+    
+    
 
     string line;
     int lineCount = 0;
@@ -79,6 +84,9 @@ int main(){
 
         interpreter(root, int_values, float_values, int_names, float_names, condition, toPass);
         // clearTree(root);
+        // the tree will be deleted in interpreter (in future), because of loop conditions
+
+        
     }
     inputFile.close();
 

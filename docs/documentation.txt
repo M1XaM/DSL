@@ -17,6 +17,10 @@ if <varname> = <math expression> then
     ...
 endif
 
+repeat <math expression> times
+    ...
+endrepeat
+
 
 Possible errors:
 Syntax Error: There is an if statement that is not 'closed' (unpredictable behavior may occur)"

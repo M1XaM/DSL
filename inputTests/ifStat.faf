@@ -2,7 +2,6 @@ int a = 6
 
 if a = 5 + 1 then
     a = 4
-
     if a = 8 / 2 then
         float b = 5.4
         a = b  
