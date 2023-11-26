@@ -11,6 +11,7 @@ static vector<int> int_values;
 static vector<float> float_values;
 static vector<string> int_names;
 static vector<string> float_names;
+static int toPass = 0;
 static vector<LoopNode*> LoopList;
 static int activeLoop = -1;
 
@@ -115,23 +116,23 @@ Node* copyTree(const Node* originalNode) {
     return newNode;
 }
 
-void interpreter(Node* root,   vector<int>& condition, int& toPass);
-void iterateLoopNode(LoopNode* loopNode,  vector<int>& condition, int& toPass){
+void interpreter(Node* root,   vector<int>& condition);
+void iterateLoopNode(LoopNode* loopNode,  vector<int>& condition){
     
     for(int i = 0; i < loopNode->initial_n; i++){
         for(int j = 0; j < loopNode->roots.size(); j++){
             
             if(loopNode->roots.at(j)->isItLoop == 0){
                 loopNode->roots.at(j)->actualRoot = loopNode->roots.at(j)->actualRoot->initialState;
-                interpreter(loopNode->roots.at(j)->actualRoot, condition, toPass);
+                interpreter(loopNode->roots.at(j)->actualRoot, condition);
             }else{
-                iterateLoopNode(loopNode->roots.at(j),  condition, toPass);
+                iterateLoopNode(loopNode->roots.at(j),  condition);
             }
         }
     }
 }
 
-void interpreter(Node* root, vector<int>& condition, int& toPass){
+void interpreter(Node* root, vector<int>& condition){
     root->initialState = copyTree(root);
 
     // Implementing "passing" endif statements (this block of code must be in the beggining)
@@ -172,7 +173,7 @@ void interpreter(Node* root, vector<int>& condition, int& toPass){
         activeLoop -= 1;
         if(activeLoop == -1 && LoopList.size() > 0){  // check if we start iterating
             int iterations  = LoopList.at(0)->initial_n;
-            iterateLoopNode(LoopList.at(0), condition, toPass);
+            iterateLoopNode(LoopList.at(0), condition);
             LoopList.clear();
         }
         return;

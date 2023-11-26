@@ -1,11 +1,14 @@
 int a = 0
 int b = 0
+
 repeat 7 times
     a = a + 1
     show a
 
     repeat 5 times
-    b = b + 1
-    show b
+        b = b + 1
+        show b
+    endrepeat
 
 endrepeat
+

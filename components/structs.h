@@ -1,5 +1,5 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef STRUCTS_H
+#define STRUCTS_H
 
 #include<string>
 #include<vector>
@@ -9,8 +9,7 @@ enum class TokenType{
     Equal = 8,
     Plus = 9, Minus = 9,
     Multiply = 10, Divide = 10,
-    Power = 11,
-    Number = 12, Identifier = 12,
+    Number = 11, Identifier = 11,
 };
 
 struct Token {

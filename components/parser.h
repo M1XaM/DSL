@@ -7,19 +7,6 @@
 #include"structs.h"
 using namespace std;
 
-void clearTree(Node* root){
-    if(root->left == nullptr && root->right == nullptr){
-        delete root;
-        return;
-    }
-    if(root->left != nullptr){
-        clearTree(root->left);
-    }
-    if(root->right != nullptr){
-        clearTree(root->right);
-    }
-}
-
 Node* createNode(Token token){
     Node* newNode = new Node();
     newNode->type = token.type;
@@ -89,19 +76,6 @@ Node* parser(vector<Token>& lineObject){
         // If it's endrepeat statement - the root is already formed
     }else{
         root = mathExpression(lineObject);
-        // cout << root->value << " " << int(root->type) << endl;
-        // cout << root->left->value << " " << int(root->left->type) << endl;
-        // cout << root->left->left->value << " " << int(root->left->left->type) << endl;
-        // cout << root->left->left->left->value << " " << int(root->left->left->left->type) << endl;
-        // cout << root->left->left->right->value << " " << int(root->left->left->left->left->type) << endl;
-        // cout << endl;
-
-        // cout << root->left->right->value << endl;
-        // cout << root->left->right->right->value << endl;
-
-        // cout << root->right->value << endl;
-        // cout << root->right->left->value << endl;
-        // cout << root->right->right->value << " " << root->right->right->priority << endl;
     }
 
     return root;
