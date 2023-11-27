@@ -83,6 +83,11 @@ void tokenizeExpression(string expression, vector<Token>& lineObject){
                 }else if(isOperator(str)){
                     lineObject.push_back(makeToken(whichTokenType(str), str));
                 }else{
+                    // check variable naming
+                    if(!isValidVariableName(str)){
+                        cout << "Syntax Error: Wrong variable naming" << endl;
+                        exit(1);
+                    }
                     lineObject.push_back(makeToken(TokenType::Identifier, str));
                 }
                 str = "";

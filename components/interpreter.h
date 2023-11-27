@@ -11,9 +11,24 @@ static vector<int> int_values;
 static vector<float> float_values;
 static vector<string> int_names;
 static vector<string> float_names;
+static vector<int> condition = {1};
 static int toPass = 0;
 static vector<LoopNode*> LoopList;
 static int activeLoop = -1;
+
+void lastTest(){
+    if(activeLoop > -1){
+        cout << "Syntax Error: There are open loops" << endl;
+        exit(1);
+    }else if(activeLoop < -1){
+        cout << "Syntax Eror: Too many endrepeat statements" << endl;
+        exit(1);
+    }
+    if(condition.size() > 1){
+        cout << "Syntax Error: There are open if statements" << endl;
+        exit(1);
+    }
+}
 
 bool isOperation(Node* node) {
     return (node->value == "+" || node->value == "-" || node->value == "*" || node->value == "/");
@@ -116,23 +131,21 @@ Node* copyTree(const Node* originalNode) {
     return newNode;
 }
 
-void interpreter(Node* root,   vector<int>& condition);
-void iterateLoopNode(LoopNode* loopNode,  vector<int>& condition){
-    
+void interpreter(Node* root);
+void iterateLoopNode(LoopNode* loopNode){
     for(int i = 0; i < loopNode->initial_n; i++){
         for(int j = 0; j < loopNode->roots.size(); j++){
-            
             if(loopNode->roots.at(j)->isItLoop == 0){
                 loopNode->roots.at(j)->actualRoot = loopNode->roots.at(j)->actualRoot->initialState;
-                interpreter(loopNode->roots.at(j)->actualRoot, condition);
+                interpreter(loopNode->roots.at(j)->actualRoot);
             }else{
-                iterateLoopNode(loopNode->roots.at(j),  condition);
+                iterateLoopNode(loopNode->roots.at(j));
             }
         }
     }
 }
 
-void interpreter(Node* root, vector<int>& condition){
+void interpreter(Node* root){
     root->initialState = copyTree(root);
 
     // Implementing "passing" endif statements (this block of code must be in the beggining)
@@ -145,11 +158,11 @@ void interpreter(Node* root, vector<int>& condition){
             condition.pop_back();
             return;
         }else{
-            cout << "Syntax Error: To many endif statements" << endl;
+            cout << "Syntax Error: Too many endif statements" << endl;
             exit(1);
         }
     }
-    if(condition.back() == 0 && root->value == "if"){
+    if(root->value == "if" && condition.back() == 0){
         toPass += 1;
         return;
     }else if(condition.back() == 0){
@@ -171,9 +184,9 @@ void interpreter(Node* root, vector<int>& condition){
         return;
     }else if(root->value == "endrepeat"){
         activeLoop -= 1;
-        if(activeLoop == -1 && LoopList.size() > 0){  // check if we start iterating
+        if(activeLoop == -1 && LoopList.size() > 0){  // check if need to start to iterate LoopNode
             int iterations  = LoopList.at(0)->initial_n;
-            iterateLoopNode(LoopList.at(0), condition);
+            iterateLoopNode(LoopList.at(0));
             LoopList.clear();
         }
         return;
@@ -181,6 +194,13 @@ void interpreter(Node* root, vector<int>& condition){
     // Add statements in active loop
     // LoopNode have roots that are just another LoopNode, so we have to make our root into LoopNode but to interpret it like a simple root
     if(activeLoop > -1){
+        string first = "if";
+        string second = "endif";
+        if(root->value == first || root->value == second){
+            cout << "Syntex Error: If statements are not allowed in loops" << endl;
+            exit(1);
+        }
+
         LoopNode* notLoop = new LoopNode;
         notLoop->isItLoop = 0;
         notLoop->actualRoot = root;

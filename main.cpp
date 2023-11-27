@@ -11,21 +11,20 @@ using namespace std;
 
 void tokenizer(string line, int lineCount, vector<Token>& lineObject);
 Node* parser(vector<Token>& lineObject);
-void interpreter(Node* root, vector<int>& condition);
-
+void interpreter(Node* root);
+void lastTest();
 
 int main(){
     // string filename;
     // cout << "Enter the name of exisiting file: ";
     // cin >> filename;
     // ifstream inputFile(filename);
-    ifstream inputFile("inputTests/loop.faf"); 
+    ifstream inputFile("inputTests/test.faf"); 
     if (!inputFile.is_open()){
         cout << "Error opening the file." << endl;
         return 1;
     }
 
-    static vector<int> condition = {1};
 
     string line;
     int lineCount = 0;
@@ -39,15 +38,12 @@ int main(){
         Node* root = new Node();
         root = parser(lineObject);
 
-        interpreter(root, condition);
+        interpreter(root);
     }
 
     inputFile.close();
-    if(condition.size() > 1){
-        cout << "Syntax Error: There is an if statement that is not 'closed' (unpredictable behavior may occur)" << endl;
-        exit(1);
-    }
 
+    lastTest();  // check if loops and if-stats are closed
     return 0;
 }
 

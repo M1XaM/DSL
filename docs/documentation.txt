@@ -23,9 +23,12 @@ endrepeat
 
 
 Possible errors:
-Syntax Error: There is an if statement that is not 'closed' (unpredictable behavior may occur)"
-Syntax Error: To many endif statements
+Syntax Error: There are open if statements
+Syntax Error: There are open loops
+Syntax Error: Too many endif statements
+Syntax Eror: Too many endrepeat statements
 Syntax Error: (on line number ...)
+Syntax Error: If statements are not allowed in loops
 Division Error: You cannot divide by zero
 Initialization Error: Cannot initiate one variable two times
 Initialization Error: Variable was not initiated
@@ -33,6 +36,7 @@ Initialization Error: Variable was not initiated
 Some errors and/or unpredictable behavior can be triggered if:
 Math operator do not have 2 values to work with
 Each element from the math expression is not separated by a space
+If or loop statements are not closed in same scope
 
 
 
