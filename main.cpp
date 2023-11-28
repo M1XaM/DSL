@@ -19,7 +19,7 @@ int main(){
     // cout << "Enter the name of exisiting file: ";
     // cin >> filename;
     // ifstream inputFile(filename);
-    ifstream inputFile("inputTests/test.faf"); 
+    ifstream inputFile("inputTests/basic.faf"); 
     if (!inputFile.is_open()){
         cout << "Error opening the file." << endl;
         return 1;
